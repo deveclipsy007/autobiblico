@@ -4,6 +4,8 @@
 import React from 'react';
 import {COLORS} from '../../../brand/tokens';
 import {D, EIN, EIO, EO, ESM, Pt, cbez, clamp, dist, lerp, rnd, win} from '../lib/math';
+import {Easing} from 'remotion';
+const PULL = Easing.bezier(0.45, 0, 0.12, 1);
 import {Fmt, fit, pick, useFmt} from '../lib/format';
 import {A, S} from '../story';
 import {Cam, CamKey, WorldLayer, camAt, depthScale, drift, project} from './CinematicCamera';
@@ -54,7 +56,7 @@ export const worldKeys = (f: Fmt): CamKey[] => {
   return [
     {t: 0, x: 0, y: -900, z: 36, r: 5},
     {t: 13.2, x: 0, y: -900, z: 40, r: 2, d: 2.3, e: ESM},
-    {t: A.desaparece + 0.95, x: pick(f, 170, 300), y: pick(f, -850, -870), z: pick(f, 1.5, 1.25), r: 0, d: 1.0, e: EO},
+    {t: A.desaparece + 1.05, x: pick(f, 170, 300), y: pick(f, -850, -870), z: pick(f, 1.5, 1.25), r: 0, d: 1.15, e: PULL},
     {t: A.coloca - 0.05, x: pick(f, 130, 240), y: -865, z: pick(f, 1.62, 1.35), d: 1.15, e: ESM},
     {t: A.terra + 0.2, x: 0, y: pick(f, -60, -80), z: pick(f, 0.9, 0.78), d: 0.85, e: EIO},
     {t: A.acontecendo + 0.5, x: 0, y: pick(f, 140, 110), z: pick(f, 0.98, 0.84), d: 2.6, e: ESM},
@@ -98,7 +100,7 @@ export const FLIGHTS: Flight[] = [
 const Sky: React.FC<{t: number; f: Fmt}> = ({t, f}) => {
   const days = clamp(D(t, A.tempo - 0.5, 2.8)) * 2;
   const ph = days % 1, on = days > 0 && t < A.acontecendo + 0.6;
-  const night = on ? Math.max(0, Math.cos(ph * Math.PI * 2)) ** 3 * 0 + (ph > 0.82 || ph < 0.04 ? 0.5 : 0) : 0;
+  const night = on ? 0.5 * Math.max(0, -Math.sin(ph * Math.PI * 2 - Math.PI / 2)) ** 2 * clamp(days * 3) * clamp((2 - days) * 3) : 0;
   const sx = lerp(-0.1, 1.1, ph) * f.W, sy = f.H * pick(f, 0.2, 0.18) + (1 - Math.sin(ph * Math.PI)) * f.H * 0.18;
   return (
     <>
@@ -121,7 +123,7 @@ export const WorldScene: React.FC<{t: number}> = ({t}) => {
   const F = rootFront(t, {start: W_T.rootStart, raiz: A.raiz});
   const sprout = sproutAt(t, {broto: A.broto, insig: A.insignificante, cresce: A.cresce});
   const g = t > W_T.messageIn ? 1 : ESM(D(t, W_T.grow, 2.5));
-  const nightR = t > W_T.messageIn ? -1 : 6000 * EIO(D(t, W_T.night, 1.3)) + 40000 * EIO(D(t, A.mas3 - 0.1, 2.5));
+  const nightR = t > W_T.messageIn ? -1 : (t < W_T.night ? 0 : 900 + 5100 * EIO(D(t, W_T.night, 1.3))) + 40000 * EIO(D(t, A.mas3 - 0.1, 2.5));
   const treeO = t > W_T.messageIn ? 1 : (1 - EIO(D(t, A.comeco - 0.1, 1.0))) * (1 - 0.85 * win(t, A.algo + 0.1, A.mas3 - 0.05, 0.9, 0.6));
   const crack = EO(D(t, A.vida, 0.7));
   const seedGlow = 0.9 * Math.sin(Math.PI * D(t, A.vida - 0.1, 0.9)) + 0.25 * win(t, A.vida, A.raiz + 1.5, 0.6, 1.2);
@@ -147,7 +149,7 @@ export const WorldScene: React.FC<{t: number}> = ({t}) => {
         {F > 0 && t < W_T.messageIn && <ProceduralRootGrowth t={t} F={F} raizAt={A.raiz} raizOut={A.depois + 0.4} />}
         {t > W_T.messageIn && <ProceduralRootGrowth t={t} F={1e5} raizAt={-9} raizOut={-8} />}
         <DiagramTrace t={t} f={f} a={W_T.diagA} out={W_T.diagOut} z={cam.z} />
-        {nightR > 0 && <NightField R={nightR} t={t} />}
+        {nightR > 0 && <NightField R={nightR} t={t} o={EO(D(t, W_T.night, 0.7))} />}
         <g opacity={treeO}>
           <PlantGrowthSequence t={t} g={g} sprout={sprout} nightR={nightR} flowerBoost={kingdom ? 0.6 * EO(D(t, A.reino2 - 0.4, 1.2)) : 0} />
         </g>

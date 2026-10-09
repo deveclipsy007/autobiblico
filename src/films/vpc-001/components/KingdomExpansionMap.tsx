@@ -13,12 +13,13 @@ const NET = genNetwork();
 const STARS = Array.from({length: 260}, (_, i) => [(rnd(i, 31) - 0.5) * 9000, -700 + (rnd(i, 32) - 0.5) * 9000, rnd(i, 33)] as [number, number, number]);
 
 /** Fundo noturno no mundo (círculo que cresce do pé da árvore) + estrelas. */
-export const NightField: React.FC<{R: number; t: number}> = ({R, t}) => {
+export const NightField: React.FC<{R: number; t: number; o?: number}> = ({R, t, o = 1}) => {
   if (R <= 0) return null;
   return (
-    <g>
-      <circle cx={NIGHT_C[0]} cy={NIGHT_C[1]} r={R} fill={COLORS.deep} />
-      <circle cx={NIGHT_C[0]} cy={NIGHT_C[1]} r={R} fill="none" stroke={COLORS.goldLight} strokeOpacity={0.25 * clamp(1 - R / 30000)} strokeWidth={R * 0.012} />
+    <g opacity={o}>
+      <defs><radialGradient id="night-g"><stop offset="0" stopColor={COLORS.deep} /><stop offset="0.8" stopColor={COLORS.deep} /><stop offset="1" stopColor={COLORS.deep} stopOpacity="0" /></radialGradient></defs>
+      <circle cx={NIGHT_C[0]} cy={NIGHT_C[1]} r={R} fill="url(#night-g)" />
+      <circle cx={NIGHT_C[0]} cy={NIGHT_C[1]} r={R} fill="none" stroke={COLORS.goldLight} strokeOpacity={0.12 * clamp(1 - R / 30000)} strokeWidth={R * 0.006} />
       {STARS.map(([x, y, k], i) => dist([x, y], NIGHT_C) < R && <circle key={i} cx={x} cy={y} r={2 + k * 4} fill={COLORS.cream} opacity={(0.15 + 0.35 * k) * (0.7 + 0.3 * Math.sin(t * (1 + k) + i))} />)}
     </g>
   );

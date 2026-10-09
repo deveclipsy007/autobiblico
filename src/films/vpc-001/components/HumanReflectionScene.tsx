@@ -52,7 +52,7 @@ export const HumanReflectionScene: React.FC<{t: number}> = ({t}) => {
   const irisR = -30 + iris * Math.hypot(f.W, f.H) * 0.6;
   const reorg = EIO(D(t, A.nem - 0.5, 0.9));
   const line = ESM(D(t, A.nem - 0.1, 1.4));
-  const fade = EIO(D(t, W_T.messageIn - 0.1, 0.5));
+  const fade = EIO(D(t, W_T.messageIn + 0.03, 0.55));
   const times = [A.oracao - 0.3, A.gesto - 0.25, A.decisao - 0.15];
   const thread = (i: number) => {
     const u = EO(D(t, times[i], 0.45));
