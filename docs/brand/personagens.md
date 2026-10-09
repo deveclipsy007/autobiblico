@@ -33,3 +33,15 @@ Vem da logo. **Acento, nunca fundo.** Clean e sofisticado.
 - `ChromaTrail`: rastro de objetos rápidos (semente caindo, luz que viaja).
 - Pontas de linhas que "desenham" (sublinhado, raízes, diagrama) terminam numa **ponta de brasa**.
 - Cores: `EMBER.core #E8742A`, `EMBER.hot #FFB36B`, `EMBER.blue #79AEE0`.
+
+# Marca: a esfera dourada (`src/brand/BrandSphere.tsx`)
+- **Não há logo escrita nos filmes.** A marca é a esfera dourada (`public/img/sphere.png`, fundo recortado da arte original).
+- **Aparições sutis:** ao lado do cabeçalho bíblico, no ponto de origem dos mapas, em cartões/selos. Pequena, girando devagar.
+- **Assinatura final:** escuro → a luz do objeto-herói fica sozinha → "tum": a esfera entra com mola, gira desacelerando até assentar, um brilho a percorre, poeira dourada orbita, brilho elíptico no chão. Sem texto.
+- A luz sobre a esfera é fixa (realce em cima à esquerda, sombra embaixo à direita) enquanto ela gira: é o que dá a sensação 3D.
+
+# Tipografia (v3)
+- **Display e versículos:** Cormorant Garamond (600 em caixa alta com tracking 0,05em; itálico 500 para palavras emotivas).
+- **Micro-rótulos:** Manrope/DM Sans em caixa alta com tracking largo, em ouro.
+- **Ouro em gradiente** (`GOLD.deep` sobre creme, `GOLD.light` sobre escuro) nas palavras-chave, nunca em tudo.
+- **Fio dourado com losango** (`GoldRule`) acompanhando frases e palavras importantes.

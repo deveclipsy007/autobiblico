@@ -7,7 +7,7 @@ import {D, EIN, EIO, EO, ESM, Pt, cbez, clamp, dist, lerp, rnd, win} from '../li
 import {Easing} from 'remotion';
 const PULL = Easing.bezier(0.45, 0, 0.12, 1);
 import {Fmt, fit, pick, useFmt} from '../lib/format';
-import {A, S} from '../story';
+import {A, BRAND, S} from '../story';
 import {Cam, CamKey, WorldLayer, camAt, depthScale, drift, project} from './CinematicCamera';
 import {OrbitBokeh, ScaleMarker, SEED_R, SeedSphere} from './SeedMacroScene';
 import {FingerScaleReveal, contactWorld, handPose} from './FingerScaleReveal';
@@ -88,7 +88,7 @@ export const worldKeys = (f: Fmt): CamKey[] => {
     {t: A.dificil + 0.1, x: s.x, y: s.y, z: s.z, d: 2.2},
     {t: A.lembrar + 0.3, x: s.x + 60, y: s.y, z: s.z * 1.08, d: 4.3, e: ESM},
     {t: A.esperanca + 0.25, x: P2H[0] - 20, y: P2H[1] - 30, z: pick(f, 2.3, 2.0), d: 3.1},
-    {t: A.ver - 0.05, x: P2H[0], y: P2H[1] - 6, z: 22, d: 0.75, e: EIN},
+    {t: BRAND.tum - 0.05, x: P2H[0], y: P2H[1] - 6, z: 22, d: 0.8, e: EIN},
   ];
 };
 /** Inclinação da câmera (graus, topo se afasta): plongée no mergulho, contra-plongée na árvore, mapa rumo ao horizonte. */
@@ -97,7 +97,7 @@ export const worldPitch = (t: number) => camAt(t, [
   {t: A.mas2 + 1.6, r: 12, d: 1.6}, {t: A.raiz, r: 0, d: 1.5},
   {t: A.abrigo, r: 11, d: 2.2}, {t: A.jesus2 + 0.8, r: 0, d: 1.4},
   {t: A.maior + 0.5, r: 42, d: 2.4}, {t: A.anunciar + 0.45, r: 0, d: 1.4},
-  {t: A.esperanca + 0.2, r: 8, d: 2.6}, {t: A.ver, r: 0, d: 0.7},
+  {t: A.esperanca + 0.2, r: 8, d: 2.6}, {t: BRAND.tum, r: 0, d: 0.7},
 ]).r;
 export const worldCam = (t: number, f: Fmt): Cam => {
   const c = camAt(t, worldKeys(f));

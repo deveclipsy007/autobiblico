@@ -19,6 +19,6 @@ export const motionAt = (t: number, f: Fmt, fps: number): number => {
     if (t > W_T.release && t < W_T.land) { const a = seedWorld(t0).p, b = seedWorld(t).p; s = Math.max(s, Math.hypot(b[0] - a[0], b[1] - a[1]) * worldCam(t, f).z * 0.5); }
   }
   if (t > HUMAN_T.a && t < HUMAN_T.b) s = Math.max(s, camSpeed(humanCam(t0, f), humanCam(t, f), f));
-  if (t > BRAND_T.ver - 0.1) { const a = brandPose(t0, f), b = brandPose(t, f); s = Math.max(s, Math.abs(Math.log(b.sc / a.sc)) * Math.hypot(f.W, f.H) / 2 + Math.hypot(b.x - a.x, b.y - a.y)); }
+  if (t > BRAND_T.tum + dt) { const a = brandPose(t0, f), b = brandPose(t, f); s = Math.max(s, Math.abs(Math.log(b.sc / a.sc)) * b.r + (Math.abs(b.rot - a.rot) * Math.PI / 180) * b.r * 0.6); }
   return s;
 };

@@ -63,8 +63,10 @@ export const S = {
   brand: A.esperanca + 0.5,
 };
 
-export const VOICE_OFF = VOICE_END + PRE;
-export const END = VOICE_OFF + 4.9;
+/** v3: a narração termina em "esperança" (o "Ver para crer" falado foi cortado em 74,78 s da voz). */
+export const VOICE_CUT = 74.78;
+export const VOICE_OFF = Math.min(VOICE_END, VOICE_CUT) + PRE;
 
-/** Assinatura (luz → marca). */
-export const BRAND = {a: A.esperanca + 0.42};
+/** Assinatura (luz → esfera dourada). tum = a esfera aparece. */
+export const BRAND = {a: A.esperanca + 0.42, dark: A.esperanca + 0.15, tum: A.esperanca + 1.0};
+export const END = BRAND.tum + 4.6;

@@ -15,7 +15,7 @@ const rnd = (i: number, s = 1) => { const x = Math.sin(i * 127.1 + s * 311.7) * 
 const thr = (u: number, K: number, inverse = false) => (['R', 'G', 'B'] as const).map((c) => React.createElement(`feFunc${c}`, {key: c, type: 'linear', slope: inverse ? K : -K, intercept: inverse ? -K * u : K * u}));
 
 /** Texto que queima para dentro (e opcionalmente para fora). x = centro, y = linha de base. */
-export const BurnText: React.FC<{t: number; id: string; text: string; x: number; y: number; size: number; family: string; weight?: number; italic?: boolean; tracking?: number; at: number; dur?: number; out?: number; outDur?: number; mode?: 'char' | 'lit'; stretch?: number; opacity?: number}> = ({t, id, text, x, y, size, family, weight = 800, italic = false, tracking = 0, at, dur = 0.9, out = 1e9, outDur = 0.9, mode = 'char', stretch = 1, opacity = 1}) => {
+export const BurnText: React.FC<{t: number; id: string; text: string; x: number; y: number; size: number; family: string; weight?: number; italic?: boolean; tracking?: number; at: number; dur?: number; out?: number; outDur?: number; mode?: 'char' | 'lit' | 'gold'; stretch?: number; opacity?: number}> = ({t, id, text, x, y, size, family, weight = 800, italic = false, tracking = 0, at, dur = 0.9, out = 1e9, outDur = 0.9, mode = 'char', stretch = 1, opacity = 1}) => {
   if (t < at - 0.05 || t > out + outDur + 0.05) return null;
   const font = `${italic ? 'italic ' : ''}${weight} ${size}px ${family}`;
   const W = measure(text, font, tracking), H = size * 1.35, pad = size * 0.6;
@@ -30,7 +30,8 @@ export const BurnText: React.FC<{t: number; id: string; text: string; x: number;
     <svg style={{position: 'absolute', left: x - W / 2 - pad, top: y - size * 1.05 - pad * 0.5, overflow: 'visible', opacity, transformOrigin: `50% ${size * 1.05 + pad * 0.5}px`, transform: stretch !== 1 ? `scaleY(${stretch})` : undefined}} width={W + pad * 2} height={H + pad * 2}>
       <defs>
         <pattern id={`${id}-tex`} patternUnits="userSpaceOnUse" width={2048 * texK} height={512 * texK}><image href={staticFile('img/ember-texture.jpg')} width={2048 * texK} height={512 * texK} /></pattern>
-        <linearGradient id={`${id}-lit`} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#FFE2B8" /><stop offset="0.55" stopColor={EMBER.hot} /><stop offset="1" stopColor={EMBER.core} /></linearGradient>
+        <linearGradient id={`${id}-lit`} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#FFF2D6" /><stop offset="0.45" stopColor="#F1C987" /><stop offset="1" stopColor="#D98E45" /></linearGradient>
+        <linearGradient id={`${id}-gold`} x1="0" y1={-size * 0.8} x2="0" y2={size * 0.1} gradientUnits="userSpaceOnUse"><stop offset="0" stopColor="#E8C78C" /><stop offset="0.38" stopColor="#C99556" /><stop offset="0.7" stopColor="#A46C33" /><stop offset="1" stopColor="#7A4A22" /></linearGradient>
         <filter id={`${id}-m`} x="0" y="0" width="1" height="1" colorInterpolationFilters="sRGB"><feComponentTransfer>{thr(burningOut ? uOut : uIn, K, burningOut)}</feComponentTransfer></filter>
         <filter id={`${id}-e`} x="0" y="0" width="1" height="1" colorInterpolationFilters="sRGB">
           <feComponentTransfer result="a">{thr(front, K, burningOut)}</feComponentTransfer>
@@ -44,8 +45,8 @@ export const BurnText: React.FC<{t: number; id: string; text: string; x: number;
       </defs>
       <g transform={`translate(${pad} ${size * 1.05 + pad * 0.5})`}>
         {/* calor por baixo das letras */}
-        <text x={0} y={0} fontFamily={family} fontWeight={weight} fontStyle={italic ? 'italic' : 'normal'} fontSize={size} letterSpacing={tracking} fill={EMBER.core} filter={`url(#${id}-blur)`} opacity={(mode === 'lit' ? 0.55 : 0.18 + (active ? 0.35 : 0)) * (burningOut ? 1 - uOut * 0.8 : 1)} mask={`url(#${id}-mask)`}>{text}</text>
-        <text x={0} y={0} fontFamily={family} fontWeight={weight} fontStyle={italic ? 'italic' : 'normal'} fontSize={size} letterSpacing={tracking} fill={mode === 'lit' ? `url(#${id}-lit)` : `url(#${id}-tex)`} mask={`url(#${id}-mask)`}>{text}</text>
+        <text x={0} y={0} fontFamily={family} fontWeight={weight} fontStyle={italic ? 'italic' : 'normal'} fontSize={size} letterSpacing={tracking} fill={EMBER.core} filter={`url(#${id}-blur)`} opacity={(mode === 'lit' ? 0.5 : mode === 'gold' ? (active ? 0.4 : 0.08) : 0.18 + (active ? 0.35 : 0)) * (burningOut ? 1 - uOut * 0.8 : 1)} mask={`url(#${id}-mask)`}>{text}</text>
+        <text x={0} y={0} fontFamily={family} fontWeight={weight} fontStyle={italic ? 'italic' : 'normal'} fontSize={size} letterSpacing={tracking} fill={mode === 'lit' ? `url(#${id}-lit)` : mode === 'gold' ? `url(#${id}-gold)` : `url(#${id}-tex)`} mask={`url(#${id}-mask)`}>{text}</text>
         {active && <>
           <text x={0} y={0} fontFamily={family} fontWeight={weight} fontStyle={italic ? 'italic' : 'normal'} fontSize={size} letterSpacing={tracking} fill={EMBER.hot} mask={`url(#${id}-edge)`} filter={`url(#${id}-soft)`}>{text}</text>
           <text x={0} y={0} fontFamily={family} fontWeight={weight} fontStyle={italic ? 'italic' : 'normal'} fontSize={size} letterSpacing={tracking} fill={EMBER.white} mask={`url(#${id}-edge)`} opacity={0.7}>{text}</text>

@@ -1,6 +1,7 @@
 // ShareCard — o convite a compartilhar como microinteração: a mensagem vira um cartão, o botão é tocado,
 // o cartão se recolhe numa luz e essa luz viaja até quem está num começo difícil.
 import React from 'react';
+import {Img, staticFile} from 'remotion';
 import {COLORS, FONTS} from '../../../brand/tokens';
 import {D, EBACK, EIN, EIO, EO, clamp, lerp} from '../lib/math';
 import {Fmt, pick} from '../lib/format';
@@ -19,8 +20,8 @@ export const ShareCard: React.FC<{t: number; f: Fmt; cam: Cam}> = ({t, f, cam}) 
   return (
     <div style={{position: 'absolute', left: cx - w / 2, top: cy - h / 2, width: w, height: h, transformOrigin: `${w - 70}px ${h / 2}px`, transform: `translate(${(hx - (cx - w / 2 + w - 70)) * fo}px, ${(hy - cy) * fo}px) scale(${lerp(0.88, 1, inn) * (1 - fo * 0.97)})`, opacity: clamp(inn * 2) * (1 - EIN(D(t, gone - 0.15, 0.2)))}}>
       <div style={{position: 'absolute', inset: 0, borderRadius: 28, background: '#FBF8F2', boxShadow: '0 24px 60px rgba(36,39,44,.18), 0 0 0 1px rgba(178,123,73,.25)'}} />
-      <div style={{position: 'absolute', left: 34, top: 28, fontFamily: FONTS.body, fontWeight: 600, fontSize: 20, letterSpacing: '0.28em', color: COLORS.gold}}>VER PARA CRER</div>
-      <div style={{position: 'absolute', left: 34, top: 62, fontFamily: FONTS.serif, fontStyle: 'italic', fontSize: pick(f, 38, 36), color: COLORS.graphite, whiteSpace: 'nowrap'}}>Não despreze os pequenos começos.</div>
+      <Img src={staticFile('img/sphere-96.png')} style={{position: 'absolute', left: 32, top: 22, width: 30, height: 30, transform: `rotate(${t * 20}deg)`}} />
+      <div style={{position: 'absolute', left: 34, top: 60, fontFamily: FONTS.serif, fontStyle: 'italic', fontWeight: 500, fontSize: pick(f, 42, 40), color: COLORS.graphite, whiteSpace: 'nowrap'}}>Não despreze os pequenos começos.</div>
       <div style={{position: 'absolute', right: 26, top: h / 2 - 32, width: 64, height: 64, borderRadius: 32, background: COLORS.gold, transform: `scale(${1 - 0.12 * pr})`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 ${30 * fo}px ${COLORS.goldLight}`}}>
         <svg width={30} height={30} viewBox="0 0 24 24" fill="none" stroke="#FBF8F2" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"><path d="M3.5 11.5L20.5 4l-7.5 17-2-7.5z" /></svg>
       </div>

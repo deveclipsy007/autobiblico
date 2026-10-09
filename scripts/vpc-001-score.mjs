@@ -6,7 +6,8 @@ import {dirname, join, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {CHORDS as CH, beatsIn, createEngine} from './audio-engine.mjs';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const {A, S, END, PRE} = await import(join(root, 'src/films/vpc-001/story.ts'));
+const {A, S, END, PRE, BRAND} = await import(join(root, 'src/films/vpc-001/story.ts'));
+const TUM = BRAND.tum;
 const X = createEngine(END);
 const pad = (a, b, c, amp = 0.022, cut = 1400) => CH[c].pad.forEach((m, i) => X.padNote(a, b, m, amp, typeof cut === 'function' ? cut : () => cut, (i - 1.5) * 0.3));
 const arp = (a, b, c, step = 0.5, amp = 0.014, oct = 12) => beatsIn(a, b, step).forEach((t, k) => X.pluck(t, CH[c].pad[[0, 2, 1, 3][k % 4]] + oct, amp * (k % 4 === 0 ? 1.15 : 0.85), k % 2 ? 0.3 : -0.3, 2400));
@@ -34,8 +35,8 @@ pad(A.oracao - 0.4, A.nem - 0.3, 'F', 0.022, 1500);
 pad(A.nem - 0.3, A.alguem2 - 0.4, 'C', 0.018, 1000);
 pad(A.alguem2 - 0.4, A.compartilhe, 'Am', 0.02, 1100); arp(A.alguem2, A.compartilhe, 'Am', 1, 0.009, 12);
 pad(A.compartilhe, A.esperanca, 'F', 0.024, 1800); arp(A.compartilhe, A.esperanca, 'F', 0.5, 0.011, 24); bass(A.pessoa, A.esperanca, 'F', 0.026);
-pad(A.esperanca, A.ver, 'Csus', 0.022, 1400);
-pad(A.ver, END + 0.3, 'C', 0.03, 2000); arp(A.crer + 0.3, END - 1.2, 'C', 0.5, 0.01, 24); bass(A.ver, END - 1, 'C', 0.03);
+pad(A.esperanca, TUM, 'Csus', 0.02, 1200);
+pad(TUM, END + 0.3, 'C', 0.03, 2100); arp(TUM + 0.6, END - 1.0, 'C', 0.5, 0.01, 24); bass(TUM, END - 1, 'C', 0.032);
 
 // ---------- desenho de som ----------
 // abertura: papel, luz, tinta
@@ -90,18 +91,17 @@ X.tick(A.compartilhe + 0.2, 0.04, 2200, 0); X.send(A.compartilhe + 0.55, 0.04);
 X.whoosh(A.compartilhe + 0.75, A.pessoa - A.compartilhe - 0.7, 0.03, true, -0.5, 0.5);
 X.receive(A.pessoa - 0.05, 0.035); X.shimmer(A.pessoa, 1.2, 0.012, 16);
 X.bell(A.esperanca, 79, 0.03, 0, 3); X.bell(A.esperanca + 0.12, 84, 0.028, 0, 3); X.shimmer(A.esperanca, 1.2, 0.016, 22);
-// marca
-X.whoosh(A.esperanca + 0.4, A.ver - A.esperanca - 0.4, 0.04, false, 0, 0); X.swell(A.ver, 0.6, 0.06);
-X.impact(A.ver, 0.16); X.sub(A.ver, 24, 0.16, 2.6); X.bell(A.ver + 0.02, 72, 0.04, -0.3, 4); X.bell(A.ver + 0.08, 79, 0.035, 0.3, 4); X.bell(A.ver + 0.14, 84, 0.03, 0, 4);
-X.shimmer(A.ver, 2.6, 0.022, 34); X.crunch(A.ver + 0.1, 0.04);
-X.pen(A.para - 0.05, 0.9, 0.5);
-X.bell(A.crer + 1.4, 88, 0.018, 0, 3.0);
+// marca: a luz fica sozinha no escuro → tum → a esfera gira e assenta
+X.whoosh(A.esperanca + 0.3, TUM - A.esperanca - 0.3, 0.035, false, 0, 0); X.swell(TUM, 0.9, 0.07); X.riser(TUM - 1.0, TUM, 0.03);
+X.impact(TUM, 0.2); X.sub(TUM, 24, 0.2, 3.0); X.kick(TUM, 0.25);
+X.bell(TUM + 0.02, 72, 0.045, -0.3, 4.5); X.bell(TUM + 0.1, 79, 0.04, 0.3, 4.5); X.bell(TUM + 0.18, 84, 0.034, 0, 4.5); X.bell(TUM + 0.3, 88, 0.024, 0.2, 4.5);
+X.shimmer(TUM, 3.0, 0.024, 34); X.whoosh(TUM + 0.05, 2.6, 0.04, false, 0.4, -0.4);
+X.bell(TUM + 1.3, 91, 0.016, 0.3, 2.4); X.shimmer(TUM + 1.25, 1.2, 0.012, 20);
 
 // fogo da marca nas palavras que queimam + chicote de câmera
 X.crackle(A.ninguem - 0.05, 0.8, 0.05); X.crackle(A.acontecendo - 0.35, 1.1, 0.04);
 X.crackle(A.cresce - 0.04, 0.8, 0.05); X.crackle(A.muito - 0.05, 0.8, 0.05); X.crackle(A.pequenos - 0.08, 0.8, 0.04);
 X.whoosh(S.message - 0.45, 0.9, 0.06, true, -0.6, 0.6);
-X.crackle(A.ver + 0.05, 1.2, 0.06);
 
-X.render(join(root, 'public/audio/vpc-001'), [{path: join(root, 'public/audio/vpc-001/vo/voz.wav'), at: PRE}], {duckDepth: 0.55});
+X.render(join(root, 'public/audio/vpc-001'), [{path: join(root, 'public/audio/vpc-001/vo/voz-v3.wav'), at: PRE}], {duckDepth: 0.55});
 console.log('ok', END.toFixed(2));

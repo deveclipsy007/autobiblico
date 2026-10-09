@@ -4,7 +4,7 @@ import {FONTS} from '../../../brand/tokens';
 import {measure} from '../lib/measure';
 import {A, sync} from '../story';
 
-export const PAGE = {w: 1500, h: 2100, left: 150, size: 62, lead: 104, top: 760};
+export const PAGE = {w: 1500, h: 2100, left: 150, size: 68, lead: 108, top: 760};
 export const BODY_FONT = `400 ${PAGE.size}px ${FONTS.serif}`;
 export const VN_FONT = `700 30px ${FONTS.display}`;
 export const REFERENCE = 'Mateus 13.31–32 (ARA)';

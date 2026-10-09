@@ -2,6 +2,7 @@
 // pontos dourados surgem entre os ramos, constelações se ligam e a rede se expande a partir de UM ponto
 // muito além do quadro. Poético e legível; nada de dashboard.
 import React, {useMemo} from 'react';
+import {staticFile} from 'remotion';
 import {COLORS} from '../../../brand/tokens';
 import {Pt, clamp, dist, rnd} from '../lib/math';
 import {Fmt} from '../lib/format';
@@ -78,7 +79,7 @@ export const KingdomExpansionMap: React.FC<{t: number; f: Fmt; cam: Cam; dots: n
       {originPulse > 0 && <g>
         {[0, 1, 2].map((k) => { const ph = ((t * 0.7 + k / 3) % 1); return <circle key={k} cx={O[0]} cy={O[1]} r={14 + ph * 150} fill="none" stroke={COLORS.goldLight} strokeWidth={2} opacity={originPulse * (1 - ph) * 0.8} />; })}
         <circle cx={O[0]} cy={O[1]} r={46} fill={COLORS.goldLight} opacity={originPulse * 0.22} />
-        <circle cx={O[0]} cy={O[1]} r={12} fill="#FFE3B3" opacity={originPulse} />
+        <image href={staticFile('img/sphere-96.png')} x={O[0] - 17} y={O[1] - 17} width={34} height={34} opacity={originPulse} transform={`rotate(${t * 25} ${O[0]} ${O[1]})`} />
       </g>}
     </svg>
   );

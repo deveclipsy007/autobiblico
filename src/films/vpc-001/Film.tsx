@@ -69,7 +69,7 @@ export const Film: React.FC<FilmProps> = ({audio}) => {
         <GooDefs />
         <FontGate>{blur ? <CameraMotionBlur shutterAngle={shutter} samples={6}><FilmFrame /></CameraMotionBlur> : <FilmFrame />}</FontGate>
         {audio === 'mix' && <Html5Audio src={staticFile('audio/vpc-001/mix-master.wav')} />}
-        {audio === 'voice' && <Sequence from={Math.round(PRE * fps)}><Html5Audio src={staticFile('audio/vpc-001/vo/voz.wav')} /></Sequence>}
+        {audio === 'voice' && <Sequence from={Math.round(PRE * fps)}><Html5Audio src={staticFile('audio/vpc-001/vo/voz-v3.wav')} /></Sequence>}
       </AbsoluteFill>
     </FmtCtx.Provider>
   );

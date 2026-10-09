@@ -10,6 +10,11 @@ Um único mundo contínuo em que a Palavra vira objeto: a palavra "grão" se con
 
 A voz entra em 1,2 s (respiro de luz). Toda cena é ancorada em palavras (`story.ts`, função `T()`), nunca em segundos soltos.
 
+## O que mudou na v3
+- A voz termina em "esperança": o "Ver para crer" falado foi cortado.
+- Sem logo escrita: a marca é a esfera dourada (aparece de leve no cabeçalho da página, na origem do mapa do Reino e no cartão de compartilhar) e assina o fim com um "tum" e giro.
+- Tipografia nova: Cormorant Garamond, ouro em gradiente nas palavras-chave e fios dourados.
+
 ## O que mudou na v2
 - **Voz nova** ("Will"), com todas as cenas reancoradas nas palavras dela (os tempos da tabela abaixo são da v1; a ordem e as âncoras são as mesmas).
 - **Personagens com identidade padrão:** rig articulado reutilizável (`src/brand/characters/`), elenco fixo (O Semeador, Alguém), atuação por interpolação de poses; a mão da semente no mesmo estilo.
