@@ -14,7 +14,7 @@ const camSpeed = (a: Cam, b: Cam, f: Fmt) => {
 export const motionAt = (t: number, f: Fmt, fps: number): number => {
   const dt = 1 / fps, t0 = t - dt;
   let s = 0;
-  if (t > PAGE_T.irisA && t < BRAND_T.worldOff && !(t > HUMAN_T.a + 0.85 && t < HUMAN_T.b)) {
+  if (t > PAGE_T.irisA && t < BRAND_T.worldOff && !(t > HUMAN_T.a + 0.85 && t < HUMAN_T.b - 0.09)) {
     s = Math.max(s, camSpeed(worldCam(t0, f), worldCam(t, f), f) + Math.abs(worldPitch(t) - worldPitch(t0)) * 18);
     if (t > W_T.release && t < W_T.land) { const a = seedWorld(t0).p, b = seedWorld(t).p; s = Math.max(s, Math.hypot(b[0] - a[0], b[1] - a[1]) * worldCam(t, f).z * 0.5); }
   }

@@ -52,19 +52,22 @@ const FilmFrame: React.FC = () => {
 };
 
 /** Motion blur de obturador (200°) só quando a câmera se move rápido na tela. */
-export const BLUR_PX = 13;
+export const BLUR_PX = 6;
 
 export const Film: React.FC<FilmProps> = ({audio}) => {
   const frame = useCurrentFrame();
   const {fps, width, height} = useVideoConfig();
   const t = frame / fps;
   const fmt = makeFmt(width, height);
-  const blur = motionAt(t, fmt, fps) > BLUR_PX;
+  const mv = motionAt(t, fmt, fps);
+  const blur = mv > BLUR_PX + 0.5;
+  // o obturador abre com a velocidade: no limiar o blur é ~0 (sem degrau ao ligar/desligar)
+  const shutter = Math.round(Math.min(200, Math.max(0, (mv - BLUR_PX) / 14) * 200));
   return (
     <FmtCtx.Provider value={fmt}>
       <AbsoluteFill style={{background: COLORS.cream, overflow: 'hidden'}}>
         <GooDefs />
-        <FontGate>{blur ? <CameraMotionBlur shutterAngle={200} samples={6}><FilmFrame /></CameraMotionBlur> : <FilmFrame />}</FontGate>
+        <FontGate>{blur ? <CameraMotionBlur shutterAngle={shutter} samples={6}><FilmFrame /></CameraMotionBlur> : <FilmFrame />}</FontGate>
         {audio === 'mix' && <Html5Audio src={staticFile('audio/vpc-001/mix-master.wav')} />}
         {audio === 'voice' && <Sequence from={Math.round(PRE * fps)}><Html5Audio src={staticFile('audio/vpc-001/vo/voz.wav')} /></Sequence>}
       </AbsoluteFill>

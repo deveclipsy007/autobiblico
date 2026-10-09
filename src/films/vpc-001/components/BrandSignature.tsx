@@ -10,7 +10,7 @@ import {Fmt, pick, useFmt} from '../lib/format';
 import {A, END} from '../story';
 import {ChromaRing} from '../../../brand/fire';
 
-export const BRAND_T = {a: A.esperanca + 0.42, ver: A.ver, para: A.para, crer: A.crer, worldOff: A.ver + 0.35, sub: A.crer + 1.35};
+export const BRAND_T = {a: A.esperanca + 0.1, ver: A.ver, para: A.para, crer: A.crer, worldOff: A.ver + 0.35, sub: A.crer + 1.35};
 const IMG = 1254, CROSS = [835, 490] as const, CENTER = [627, 634] as const, SPLIT = 782;
 
 /** Câmera da logo: da cruz (perto) ao enquadramento final. */

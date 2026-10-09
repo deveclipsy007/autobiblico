@@ -31,6 +31,8 @@ export const W_T = {
   night: A.jesus2 + 0.6,
   messageIn: S.message + 0.3,
 };
+/** Instante em que o mundo volta (chicote vindo da cena da pessoa). */
+export const MSG = W_T.messageIn - 0.1;
 export const P1: Pt = [330, 0], P2: Pt = [1650, 0];
 export const PS = 0.95;
 /** Atuação de "Alguém": encolhido → abre as mãos → levanta a cabeça. */
@@ -79,7 +81,7 @@ export const worldKeys = (f: Fmt): CamKey[] => {
     {t: A.discreta + 0.15, x: 0, y: 0, z: pick(f, 2.6, 2.2), d: 1.75},
     {t: A.maior + 0.7, x: 0, y: -700, z: pick(f, 0.042, 0.05), d: 2.55},
     {t: A.anunciar + 0.55, x: 0, y: 0, z: 8, d: 1.6},
-    {t: W_T.messageIn + 0.01, x: m.x - 800, y: m.y + 260, z: m.z * 1.2, d: 0.01},
+    {t: W_T.messageIn - 0.08, x: m.x - 800, y: m.y + 260, z: m.z * 1.2, d: 0.01},
     {t: W_T.messageIn + 0.6, x: m.x, y: m.y, z: m.z * 1.14, d: 0.59, e: EO},
     {t: A.vezes - 0.6, z: m.z, d: 2.9, e: ESM},
     {t: A.alguem2 - 0.1, x: m.x, y: m.y, z: m.z * 0.96, d: 4.6, e: ESM},
@@ -133,20 +135,20 @@ export const WorldScene: React.FC<{t: number}> = ({t}) => {
   const f = useFmt();
   const cam = worldCam(t, f);
   const pitch = worldPitch(t);
-  const inHuman = t > S.human + 0.85 && t < W_T.messageIn - 0.001;
+  const inHuman = t > S.human + 0.85 && t < W_T.messageIn - 0.09;
   if (inHuman) return null;
   const seed = seedWorld(t);
   const pose = handPose(t, W_T.enter, W_T.tilt, W_T.exit);
   const F = rootFront(t, {start: W_T.rootStart, raiz: A.raiz});
   const sprout = sproutAt(t, {broto: A.broto, insig: A.insignificante, cresce: A.cresce});
-  const g = t > W_T.messageIn ? 1 : ESM(D(t, W_T.grow, 2.5));
-  const nightR = t > W_T.messageIn ? -1 : (t < W_T.night ? 0 : 900 + 5100 * EIO(D(t, W_T.night, 1.3))) + 40000 * EIO(D(t, A.mas3 - 0.1, 2.5));
-  const treeO = t > W_T.messageIn ? 1 : (1 - EIO(D(t, A.comeco - 0.1, 1.0))) * (1 - 0.85 * win(t, A.algo + 0.1, A.mas3 - 0.05, 0.9, 0.6));
+  const g = t > MSG ? 1 : ESM(D(t, W_T.grow, 2.5));
+  const nightR = t > MSG ? -1 : (t < W_T.night ? 0 : 900 + 5100 * EIO(D(t, W_T.night, 1.3))) + 40000 * EIO(D(t, A.mas3 - 0.1, 2.5));
+  const treeO = t > MSG ? 1 : (1 - EIO(D(t, A.comeco - 0.1, 1.0))) * (1 - 0.85 * win(t, A.algo + 0.1, A.mas3 - 0.05, 0.9, 0.6));
   const crack = EO(D(t, A.vida, 0.7));
   const seedGlow = 0.9 * Math.sin(Math.PI * D(t, A.vida - 0.1, 0.9)) + 0.25 * win(t, A.vida, A.raiz + 1.5, 0.6, 1.2);
   const planted = EO(D(t, W_T.land + 0.2, 0.6));
   const macroO = 1 - EO(D(t, A.desaparece, 0.6));
-  const kingdom = t > A.jesus2 && t < W_T.messageIn;
+  const kingdom = t > A.jesus2 && t < MSG;
   const dip = win(t, A.algo - 0.1, A.mas3 - 0.1, 0.6, 0.4);
   const mapO = win(t, W_T.night + 0.3, A.comeco + 0.6, 0.8, 0.9) * (1 - 0.65 * dip);
   const share = t > A.alguem2 - 0.6;
@@ -165,8 +167,8 @@ export const WorldScene: React.FC<{t: number}> = ({t}) => {
       <WorldLayer cam={cam}>
         {t > A.mas2 - 0.2 && <circle cx={0} cy={110} r={0.1} />}
         {nightR < 9000 && <SoilCrossSection t={t} planted={planted} />}
-        {F > 0 && t < W_T.messageIn && nightR < 9000 && <ProceduralRootGrowth t={t} F={F} raizAt={A.raiz} raizOut={A.depois + 0.4} />}
-        {t > W_T.messageIn && <ProceduralRootGrowth t={t} F={1e5} raizAt={-9} raizOut={-8} />}
+        {F > 0 && t < MSG && nightR < 9000 && <ProceduralRootGrowth t={t} F={F} raizAt={A.raiz} raizOut={A.depois + 0.4} />}
+        {t > MSG && <ProceduralRootGrowth t={t} F={1e5} raizAt={-9} raizOut={-8} />}
         <DiagramTrace t={t} f={f} a={W_T.diagA} out={W_T.diagOut} z={cam.z} />
         {nightR > 0 && <NightField R={nightR} t={t} o={EO(D(t, W_T.night, 0.7))} />}
         <g opacity={treeO}>
@@ -178,11 +180,11 @@ export const WorldScene: React.FC<{t: number}> = ({t}) => {
         {/* a vida acende: brasas sobem da fenda */}
         <Embers t={t} x={0} y={104} a={A.vida} b={A.vida + 1.4} n={22} spread={7} rise={22} size={0.55} seed={4} />
         {t > A.torna - 0.4 && t < S.human + 0.6 && FLIGHTS.map((fl, i) => <g key={i} opacity={1 - EIO(D(t, W_T.night + 0.4, 1.0))}><Bird t={t} fl={fl} /></g>)}
-        {t > W_T.messageIn && FLIGHTS.map((fl, i) => <Bird key={i} t={t - W_T.messageIn + fl.t1 + 3 + i} fl={fl} />)}
+        {t > MSG && FLIGHTS.map((fl, i) => <Bird key={i} t={t - W_T.messageIn + fl.t1 + 3 + i} fl={fl} />)}
         {/* começo: a semente acesa no centro do mapa */}
         {kingdom && t > A.comeco - 0.3 && <SeedSphere id="k-seed" x={0} y={0} glow={0.8 + 0.2 * Math.sin(t * 3)} rot={t} shade={EO(D(t, A.comeco - 0.3, 0.6))} />}
         {/* pessoas */}
-        {t > W_T.messageIn && <Persona x={P1[0]} y={groundY(p1Pose(t)) * PS} s={PS} pose={p1Pose(t)} look={CAST.semeador} t={t} />}
+        {t > MSG && <Persona x={P1[0]} y={groundY(p1Pose(t)) * PS} s={PS} pose={p1Pose(t)} look={CAST.semeador} t={t} />}
         {share && (
           <g>
             <ellipse cx={P2[0] + 20} cy={-110} rx={300} ry={260} fill="url(#shade)" opacity={0.85 * win(t, A.alguem2 - 0.3, A.pessoa + 0.2, 1.0, 1.8)} />

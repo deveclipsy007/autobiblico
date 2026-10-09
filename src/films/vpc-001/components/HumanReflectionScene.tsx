@@ -16,7 +16,7 @@ const OFFER_UP = {...POSES.offer, head: -6, eyes: 0};
 import {W_T} from './WorldScene';
 import {ChromaRing} from '../../../brand/fire';
 
-export const HUMAN_T = {a: S.human, b: W_T.messageIn};
+export const HUMAN_T = {a: S.human, b: W_T.messageIn + 0.1};
 export const humanKeys = (f: Fmt): CamKey[] => [
     {t: 0, x: 0, y: 0, z: 8, r: 0},
     {t: A.imagem + 0.95, x: -20, y: -10, z: 2.6, r: -4, d: 1.5},
@@ -60,7 +60,7 @@ export const HumanReflectionScene: React.FC<{t: number}> = ({t}) => {
   const irisR = -30 + iris * Math.hypot(f.W, f.H) * 0.6;
   const reorg = EIO(D(t, A.nem - 0.5, 0.9));
   const line = ESM(D(t, A.nem - 0.1, 1.4));
-  const fade = 0;
+  const fade = EIO(D(t, W_T.messageIn - 0.09, 0.16));
   const times = [A.oracao - 0.3, A.gesto - 0.25, A.decisao - 0.15];
   const thread = (i: number) => {
     const u = EO(D(t, times[i], 0.45));
