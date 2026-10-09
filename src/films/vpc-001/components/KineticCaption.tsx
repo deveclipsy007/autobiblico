@@ -11,10 +11,11 @@ import {A, BRAND, S} from '../story';
 import {project} from './CinematicCamera';
 import {P2H, W_T, worldCam} from './WorldScene';
 import {TREE} from './BranchExpansion';
+import {BurnText, EMBER} from '../../../brand/fire';
 
 export type Fx = 'rise' | 'shrink' | 'vanish' | 'grow' | 'spread' | 'canopy' | 'seed' | 'swell';
 type Style = 'sans' | 'serif' | 'serifUp' | 'micro';
-export type Cap = {text: string; at: number; out: number; x: number; y: number; size: number; style?: Style; color?: string; fx?: Fx; act?: number; actEnd?: number; target?: Pt; targets?: Pt[]; opacity?: number; halo?: boolean};
+export type Cap = {text: string; at: number; out: number; x: number; y: number; size: number; style?: Style; color?: string; fx?: Fx; act?: number; actEnd?: number; target?: Pt; targets?: Pt[]; opacity?: number; halo?: boolean; burn?: 'char' | 'lit'; burnOut?: boolean; ember?: boolean};
 
 const fontOf = (s: Style, size: number) => s === 'serif' ? `italic 400 ${size}px ${FONTS.serif}` : s === 'serifUp' ? `400 ${size}px ${FONTS.serif}` : s === 'micro' ? `600 ${size}px ${FONTS.body}` : `800 ${size}px ${FONTS.display}`;
 const trackOf = (s: Style, size: number) => (s === 'sans' ? -0.035 * size : s === 'micro' ? 0.3 * size : s === 'serifUp' ? 0.02 * size : -0.01 * size);
@@ -28,6 +29,9 @@ export const KineticCaption: React.FC<{t: number; c: Cap}> = ({t, c}) => {
   const act = c.act ?? c.out, actEnd = c.actEnd ?? c.out;
   const au = EIO(D(t, act, Math.max(0.01, actEnd - act)));
   const q = fx === 'shrink' || fx === 'seed' || fx === 'canopy' ? 0 : EIN(D(t, c.out, 0.35));
+  if (c.burn) {
+    return <BurnText t={t} id={`burn-${c.text.replace(/[^A-Za-z]/g, '')}-${Math.round(c.at * 10)}`} text={c.text} x={c.x} y={c.y} size={c.size} family={FONTS.display} weight={800} tracking={tr} at={c.at} dur={0.75} out={c.burnOut ? act : c.out} outDur={c.burnOut ? Math.max(0.3, actEnd - act) : 0.35} mode={c.burn} stretch={fx === 'grow' ? 1 + 0.2 * au : fx === 'swell' ? 1 + 0.2 * au : 1} opacity={c.burnOut ? 1 : 1 - q} />;
+  }
   return (
     <div style={{position: 'absolute', left: 0, top: 0, opacity: c.opacity ?? 1}}>
       {chars.map((ch, i) => {
@@ -56,7 +60,7 @@ export const KineticCaption: React.FC<{t: number; c: Cap}> = ({t, c}) => {
         }
         if (o <= 0.003) return null;
         return (
-          <span key={i} style={{position: 'absolute', left: lx, top: c.y - c.size * 0.82, fontSize: c.size, lineHeight: 1, whiteSpace: 'pre', font, letterSpacing: 0, color, opacity: o, transformOrigin: fx === 'grow' ? '50% 82%' : '50% 60%', transform: `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) rotate(${rot.toFixed(2)}deg) scale(${sx.toFixed(3)}, ${sy.toFixed(3)})`, filter: blur > 0.15 ? `blur(${blur.toFixed(2)}px)` : undefined, textShadow: c.halo ? `0 0 18px ${COLORS.cream}, 0 0 36px ${COLORS.cream}, 0 0 6px ${COLORS.cream}` : undefined}}>{ch}</span>
+          <span key={i} style={{position: 'absolute', left: lx, top: c.y - c.size * 0.82, fontSize: c.size, lineHeight: 1, whiteSpace: 'pre', font, letterSpacing: 0, color, opacity: o, transformOrigin: fx === 'grow' ? '50% 82%' : '50% 60%', transform: `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) rotate(${rot.toFixed(2)}deg) scale(${sx.toFixed(3)}, ${sy.toFixed(3)})`, filter: blur > 0.15 ? `blur(${blur.toFixed(2)}px)` : undefined, textShadow: c.halo ? `0 0 18px ${COLORS.cream}, 0 0 36px ${COLORS.cream}, 0 0 6px ${COLORS.cream}` : c.ember ? `0 0 ${(c.size * 0.12).toFixed(1)}px ${EMBER.core}, 0 0 ${(c.size * 0.3).toFixed(1)}px rgba(232,116,42,.45)` : undefined}}>{ch}</span>
         );
       })}
     </div>
@@ -116,20 +120,20 @@ export const Captions: React.FC<{t: number}> = ({t}) => {
   const canopyT = TREE.tips.filter((_, i) => i % 9 === 0).map((p) => project(f, cam, p[0], p[1]).slice(0, 2) as Pt);
   const caps: Cap[] = [
     {text: 'PEQUENO', at: A.pequeno - 0.05, out: A.desaparece + 0.1, act: A.quase, actEnd: A.desaparece + 0.05, x: pick(f, 540, 960), y: pick(f, 1330, 900), size: pick(f, 150, 120), fx: 'shrink', target: [seedS[0], seedS[1]]},
-    {text: 'NINGUÉM VÊ', at: A.ninguem - 0.05, out: A.mas2 - 0.2, act: A.acontecendo - 0.35, actEnd: A.mas2 - 0.3, x: f.cx, y: pick(f, 560, 300), size: pick(f, 122, 112), fx: 'vanish'},
+    {text: 'NINGUÉM VÊ', at: A.ninguem - 0.05, out: A.mas2 - 0.2, act: A.acontecendo - 0.35, actEnd: A.mas2 - 0.3, x: f.cx, y: pick(f, 560, 300), size: pick(f, 122, 112), fx: 'vanish', burn: 'char', burnOut: true},
     {text: 'insignificante', at: A.insignificante - 0.05, out: A.cresce - 0.25, x: pick(f, 700, 1240), y: pick(f, 860, 470), size: pick(f, 54, 50), style: 'serif', opacity: 0.55},
-    {text: 'CRESCE', at: A.cresce - 0.04, out: A.torna - 0.15, act: A.cresce + 0.2, actEnd: A.torna, x: pick(f, 540, 520), y: pick(f, 520, 380), size: pick(f, 190, 170), fx: 'grow', color: COLORS.graphite, halo: true},
+    {text: 'CRESCE', at: A.cresce - 0.04, out: A.torna - 0.15, act: A.cresce + 0.2, actEnd: A.torna, x: pick(f, 540, 520), y: pick(f, 520, 380), size: pick(f, 190, 170), fx: 'grow', color: COLORS.graphite, burn: 'char'},
     {text: 'abrigo', at: A.abrigo - 0.06, out: A.percebe - 0.1, act: A.passaros - 0.2, actEnd: A.percebe - 0.15, x: f.cx, y: pick(f, 470, 250), size: pick(f, 170, 150), style: 'serif', color: COLORS.gold, fx: 'canopy', targets: canopyT},
     {text: 'Percebe?', at: A.percebe - 0.02, out: A.jesus2 + 0.55, x: pick(f, 540, 330), y: pick(f, 420, 560), size: pick(f, 88, 84), style: 'serif'},
     {text: 'O REINO', at: A.reino2 - 0.35, out: A.algo - 0.15, x: pick(f, 540, 360), y: pick(f, 380, 450), size: pick(f, 104, 96), style: 'serifUp', color: COLORS.cream},
     {text: 'DOS CÉUS', at: A.ceus2 - 0.3, out: A.algo - 0.1, x: pick(f, 540, 360), y: pick(f, 500, 560), size: pick(f, 104, 96), style: 'serifUp', color: COLORS.goldLight},
     {text: 'de maneira discreta', at: A.discreta - 0.35, out: A.mas3 - 0.15, x: f.cx, y: pick(f, 1180, 760), size: pick(f, 48, 44), style: 'serif', color: COLORS.cream, opacity: 0.7},
     {text: 'ALCANCE', at: A.alcance - 0.06, out: A.maior, act: A.alcance + 0.35, actEnd: A.maior - 0.05, x: f.cx, y: pick(f, 760, 420), size: pick(f, 170, 150), fx: 'spread', color: COLORS.cream},
-    {text: 'MUITO MAIOR', at: A.muito - 0.05, out: A.comeco - 0.25, act: A.maior - 0.1, actEnd: A.comeco - 0.2, x: f.cx, y: pick(f, 1150, 700), size: pick(f, 120, 120), fx: 'swell', color: COLORS.goldLight},
-    {text: 'começo', at: A.comeco - 0.06, out: A.anunciar + 0.5, act: A.comeco + 0.5, actEnd: A.anunciar + 0.35, x: f.cx, y: pick(f, 700, 330), size: pick(f, 150, 140), style: 'serif', color: COLORS.goldLight, fx: 'seed', target: [f.cx, f.cy]},
-    {text: 'PEQUENOS', at: A.pequenos - 0.08, out: A.oracao - 0.45, x: pick(f, 540, 1400), y: pick(f, 330, 300), size: pick(f, 112, 104)},
+    {text: 'MUITO MAIOR', at: A.muito - 0.05, out: A.comeco - 0.25, act: A.maior - 0.1, actEnd: A.comeco - 0.2, x: f.cx, y: pick(f, 1150, 700), size: pick(f, 120, 120), fx: 'swell', color: COLORS.goldLight, burn: 'lit'},
+    {text: 'começo', at: A.comeco - 0.06, out: A.anunciar + 0.5, act: A.comeco + 0.5, actEnd: A.anunciar + 0.35, x: f.cx, y: pick(f, 700, 330), size: pick(f, 150, 140), style: 'serif', color: COLORS.goldLight, fx: 'seed', target: [f.cx, f.cy], ember: true},
+    {text: 'PEQUENOS', at: A.pequenos - 0.08, out: A.oracao - 0.45, x: pick(f, 540, 1400), y: pick(f, 330, 300), size: pick(f, 112, 104), burn: 'char'},
     {text: 'começos', at: A.comecos - 0.1, out: A.oracao - 0.4, x: pick(f, 540, 1400), y: pick(f, 450, 420), size: pick(f, 120, 112), style: 'serif', color: COLORS.gold},
-    {text: 'esperança', at: A.esperanca - 0.08, out: BRAND.a + 0.4, act: BRAND.a - 0.05, actEnd: BRAND.a + 0.45, x: f.cx, y: pick(f, 470, 250), size: pick(f, 140, 130), style: 'serif', color: COLORS.gold, fx: 'seed', target: [f.cx, f.cy]},
+    {text: 'esperança', at: A.esperanca - 0.08, out: BRAND.a + 0.4, act: BRAND.a - 0.05, actEnd: BRAND.a + 0.45, x: f.cx, y: pick(f, 470, 250), size: pick(f, 140, 130), style: 'serif', color: COLORS.gold, fx: 'seed', target: [f.cx, f.cy], ember: true},
   ];
   void P2H; void S; void W_T; void v;
   return (

@@ -45,8 +45,8 @@ export const ProceduralRootGrowth: React.FC<{t: number; F: number; raizAt: numbe
           <g key={r.id}>
             <path d={smoothPath(pts)} fill="none" stroke={COLORS.cream2} strokeOpacity={0.9 - r.depth * 0.12} strokeWidth={r.w} strokeLinecap="round" strokeLinejoin="round" />
             {growing && <>
-              <circle cx={tip[0]} cy={tip[1]} r={r.w * 1.6 + 3} fill={COLORS.goldLight} opacity={0.55} filter="url(#tip-glow)" />
-              <circle cx={tip[0]} cy={tip[1]} r={r.w * 0.6 + 1.5} fill="#FFE9C6" />
+              <circle cx={tip[0]} cy={tip[1]} r={r.w * 1.6 + 3} fill="#E8742A" opacity={0.6} filter="url(#tip-glow)" />
+              <circle cx={tip[0]} cy={tip[1]} r={r.w * 0.6 + 1.5} fill="#FFE2B8" />
             </>}
           </g>
         );

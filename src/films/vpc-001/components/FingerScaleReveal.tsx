@@ -30,14 +30,16 @@ export const FingerScaleReveal: React.FC<{pose: ReturnType<typeof handPose>}> = 
     <g transform={`translate(${HAND.at[0] + pose.dx} ${HAND.at[1] + pose.dy}) rotate(${pose.tilt} ${HAND.pivot[0]} ${HAND.pivot[1]})`}>
       <defs>
         <linearGradient id="hand-g" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#F3ECDF" />
-          <stop offset="1" stopColor="#DCCFBA" />
+          <stop offset="0" stopColor="#DDB28A" />
+          <stop offset="1" stopColor="#C49470" />
         </linearGradient>
       </defs>
-      <path d={OUTLINE} transform="translate(10 26)" fill={COLORS.graphite} opacity={0.12} />
-      <path d={OUTLINE} fill="url(#hand-g)" stroke={COLORS.graphite} strokeWidth={3} vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
-      {DETAILS.map((d, i) => <path key={i} d={d} fill="none" stroke={COLORS.graphite} strokeWidth={i === 0 ? 1.6 : 2} vectorEffect="non-scaling-stroke" strokeLinecap="round" opacity={i === 0 ? 0.45 : 0.55} />)}
-      <path d="M 26 4 C 120 0 220 0 300 -6" fill="none" stroke="#FFFFFF" strokeWidth={3} vectorEffect="non-scaling-stroke" opacity={0.5} strokeLinecap="round" />
+      <path d={OUTLINE} transform="translate(10 26)" fill={COLORS.graphite} opacity={0.1} />
+      <path d={OUTLINE} fill="url(#hand-g)" stroke="#A9744F" strokeWidth={1.6} vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
+      <path d="M 660 -62 L 1200 -46 L 1200 300 L 700 268 C 690 160 680 40 660 -62 Z" fill={COLORS.deep} />
+      <path d="M 660 -62 C 680 40 690 160 700 268" stroke={COLORS.gold} strokeWidth={2.2} vectorEffect="non-scaling-stroke" fill="none" />
+      {DETAILS.map((d, i) => <path key={i} d={d} fill="none" stroke="#8E5C3C" strokeWidth={i === 0 ? 1.4 : 1.8} vectorEffect="non-scaling-stroke" strokeLinecap="round" opacity={i === 0 ? 0.5 : 0.55} />)}
+      <path d="M 26 4 C 120 0 220 0 300 -6" fill="none" stroke={COLORS.goldLight} strokeWidth={2.4} vectorEffect="non-scaling-stroke" opacity={0.85} strokeLinecap="round" />
     </g>
   );
 };

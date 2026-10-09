@@ -35,7 +35,8 @@ export const DiagramTrace: React.FC<{t: number; f: Fmt; a: number; out: number; 
     <g>
       <path d={d} fill="none" stroke={COLORS.goldLight} strokeWidth={10 / z} strokeOpacity={0.25} strokeLinecap="round" strokeLinejoin="round" />
       <path d={d} fill="none" stroke={COLORS.goldLight} strokeWidth={3.6 / z} strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx={tip[0]} cy={tip[1]} r={6 / z} fill="#FFE9C6" />
+      <circle cx={tip[0]} cy={tip[1]} r={22 / z} fill="#E8742A" opacity={0.35} style={{filter: `blur(${6}px)`}} />
+      <circle cx={tip[0]} cy={tip[1]} r={6 / z} fill="#FFE2B8" />
       {void polyLen}
     </g>
   );

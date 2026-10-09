@@ -97,5 +97,11 @@ X.shimmer(A.ver, 2.6, 0.022, 34); X.crunch(A.ver + 0.1, 0.04);
 X.pen(A.para - 0.05, 0.9, 0.5);
 X.bell(A.crer + 1.4, 88, 0.018, 0, 3.0);
 
+// fogo da marca nas palavras que queimam + chicote de câmera
+X.crackle(A.ninguem - 0.05, 0.8, 0.05); X.crackle(A.acontecendo - 0.35, 1.1, 0.04);
+X.crackle(A.cresce - 0.04, 0.8, 0.05); X.crackle(A.muito - 0.05, 0.8, 0.05); X.crackle(A.pequenos - 0.08, 0.8, 0.04);
+X.whoosh(S.message - 0.45, 0.9, 0.06, true, -0.6, 0.6);
+X.crackle(A.ver + 0.05, 1.2, 0.06);
+
 X.render(join(root, 'public/audio/vpc-001'), [{path: join(root, 'public/audio/vpc-001/vo/voz.wav'), at: PRE}], {duckDepth: 0.55});
 console.log('ok', END.toFixed(2));

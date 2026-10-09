@@ -1,16 +1,23 @@
 # VPC-001 · O poder de algo quase invisível
 
-**Fonte:** Mateus 13.31–32 · **Editoria:** O invisível explicado · **Formatos:** 9:16 (1080×1920) e 16:9 (1920×1080), 60 fps · **Duração:** 77,3 s
+**Fonte:** Mateus 13.31–32 · **Editoria:** O invisível explicado · **Formatos:** 9:16 (1080×1920) e 16:9 (1920×1080), 60 fps · **Duração:** 82,2 s (v2)
 
 ## Conceito em uma frase
 Um único mundo contínuo em que a Palavra vira objeto: a palavra "grão" se contrai num ponto de tinta, o ponto vira semente, a semente cai na terra, a raiz vira diagrama, a árvore vira mapa do Reino, o mapa volta a ser semente na mão de uma pessoa — e a luz dessa semente vira a cruz-estrela da marca.
 
-## Narração (voz do usuário, ElevenLabs "Paulo", 190 palavras, 71,2 s)
+## Narração (v2: voz do usuário, ElevenLabs "Will – Deep, Smooth and Affectionate", 190 palavras, 76,1 s)
 > O reino dos céus é semelhante a um grão de mostarda. Mateus capítulo 13. Parece uma comparação simples, mas olha o que Jesus está mostrando aqui. Um grão tão pequeno que quase desaparece entre os dedos. Alguém o coloca na terra, e por um tempo, ninguém vê o que está acontecendo. Mas, debaixo da superfície, a vida começa a se desenvolver. Primeiro, uma raiz. Depois, um broto. Até que aquilo que parecia insignificante cresce e se torna abrigo para os pássaros. Percebe? Jesus está falando sobre o reino dos céus. Algo que pode começar de maneira discreta, mas cujo alcance se torna muito maior do que seu começo parecia anunciar. E essa imagem também nos convida a olhar para os pequenos começos da nossa vida. Uma oração. Um gesto de amor. Uma decisão de recomeçar. Nem sempre o que tem valor começa chamando atenção. Às vezes, o que hoje parece pequeno está apenas no início da sua história. Se alguém que você ama está passando por um começo difícil, compartilhe essa mensagem. Talvez essa pessoa precise se lembrar de que um pequeno começo também pode carregar esperança. Ver para crer.
 
 A voz entra em 1,2 s (respiro de luz). Toda cena é ancorada em palavras (`story.ts`, função `T()`), nunca em segundos soltos.
 
-## Cenas (tempo do filme)
+## O que mudou na v2
+- **Voz nova** ("Will"), com todas as cenas reancoradas nas palavras dela (os tempos da tabela abaixo são da v1; a ordem e as âncoras são as mesmas).
+- **Personagens com identidade padrão:** rig articulado reutilizável (`src/brand/characters/`), elenco fixo (O Semeador, Alguém), atuação por interpolação de poses; a mão da semente no mesmo estilo.
+- **Fogo da marca:** NINGUÉM VÊ queima até sumir; CRESCE e PEQUENOS queimam para dentro do papel; MUITO MAIOR acende em brasa; "começo" e "esperança" com brilho de brasa; pontas de brasa no sublinhado, raízes e diagrama; fenda da semente em brasa com faíscas; rastros cromáticos laranja/azul na queda da semente e na luz que viaja; anéis cromáticos nas íris e na explosão da marca.
+- **Ângulos:** câmera com inclinação 3D (plongée no mergulho na terra, contra-plongée na árvore, mapa do Reino inclinado rumo ao horizonte, leve contra-plongée na aproximação final).
+- **Fluidez:** interpolação de câmera consciente do zoom (o assunto nunca escapa do quadro nos grandes zooms), motion blur de obturador 200° nos movimentos rápidos, chicote de câmera entre a cena da pessoa e a árvore (no lugar do crossfade), transição da noite suave.
+
+## Cenas (tempo do filme, v1)
 | Tempo | Momento | O que se vê |
 |---|---|---|
 | 0,0–2,4 | Entrando na Bíblia | Escuro com uma faixa estreita de luz quente que se abre; câmera macro oblíqua desliza sobre papel com fibras; poeira na luz; profundidade de campo |

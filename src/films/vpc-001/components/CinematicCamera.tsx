@@ -16,7 +16,13 @@ export const camAt = (t: number, keys: CamKey[]): Cam => {
     const k = keys[i], d = k.d ?? 1.4, u = (k.e ?? EIO)(clamp((t - (k.t - d)) / d));
     if (u <= 0) break;
     const Q: Cam = {...P, ...k} as Cam;
-    P = {x: lerp(P.x, Q.x, u), y: lerp(P.y, Q.y, u), z: Math.exp(lerp(Math.log(P.z), Math.log(Q.z), u)), r: lerp(P.r, Q.r, u), f: Math.exp(lerp(Math.log(P.f), Math.log(Q.f), u))};
+    const z = Math.exp(lerp(Math.log(P.z), Math.log(Q.z), u));
+    // pan consciente do zoom: ao abrir o plano o foco fica parado e o deslocamento vem no plano aberto;
+    // ao fechar, o enquadramento chega cedo. Evita o assunto escapar do quadro em zooms grandes.
+    const span = Math.abs(Math.log(Q.z / P.z));
+    const w = span > 1e-3 ? (1 / z - 1 / P.z) / (1 / Q.z - 1 / P.z) : u;
+    const up = lerp(u, clamp(w), clamp(span / 1.6));
+    P = {x: lerp(P.x, Q.x, up), y: lerp(P.y, Q.y, up), z, r: lerp(P.r, Q.r, u), f: Math.exp(lerp(Math.log(P.f), Math.log(Q.f), u))};
   }
   return P;
 };

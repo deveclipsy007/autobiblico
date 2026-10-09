@@ -4,14 +4,29 @@
 import React from 'react';
 import {COLORS, FONTS} from '../../../brand/tokens';
 import {D, EBACK, EIN, EIO, EO, ESM, Pt, cbez, clamp, lerp} from '../lib/math';
-import {pick, useFmt} from '../lib/format';
+import {Fmt, pick, useFmt} from '../lib/format';
 import {A, S} from '../story';
 import {CamKey, WorldLayer, camAt, drift, project} from './CinematicCamera';
 import {SeedSphere} from './SeedMacroScene';
-import {PalmFigure} from './Figures';
-import {W_T} from './WorldScene';
+import {CAST, POSES, Persona, mixPose, palmOf} from '../../../brand/characters/Persona';
 
-export const HUMAN_T = {a: S.human, b: W_T.messageIn + 0.85};
+const HS = 2.4;
+const PALM0 = palmOf(POSES.offer, 0, 0, HS);
+const OFFER_UP = {...POSES.offer, head: -6, eyes: 0};
+import {W_T} from './WorldScene';
+import {ChromaRing} from '../../../brand/fire';
+
+export const HUMAN_T = {a: S.human, b: W_T.messageIn};
+export const humanKeys = (f: Fmt): CamKey[] => [
+    {t: 0, x: 0, y: 0, z: 8, r: 0},
+    {t: A.imagem + 0.95, x: -20, y: -10, z: 2.6, r: -4, d: 1.5},
+    {t: A.pequenos + 0.25, x: pick(f, -60, 120), y: pick(f, -200, -150), z: pick(f, 1.1, 1.0), r: 0, d: 1.6},
+    {t: A.nem - 0.2, x: pick(f, -40, 140), y: pick(f, -240, -170), z: pick(f, 1.04, 0.95), d: 3.8, e: ESM},
+    {t: W_T.messageIn - 0.5, x: pick(f, 200, 420), y: pick(f, -560, -460), z: pick(f, 0.72, 0.68), d: 1.1},
+    {t: W_T.messageIn, x: pick(f, 1900, 2300), y: pick(f, -1100, -1000), z: pick(f, 0.62, 0.6), d: 0.5, e: EIN},
+  ];
+export const humanCam = (t: number, f: Fmt) => drift(camAt(t, humanKeys(f)), t, 0.8);
+
 
 const ICONS = {
   oracao: ['M 0 -46 C -9 -30 -14 -12 -14 6 L -26 30 L 0 42 L 26 30 L 14 6 C 14 -12 9 -30 0 -46 Z', 'M 0 -46 V 42', 'M -26 30 L -36 46 M 26 30 L 36 46'],
@@ -40,19 +55,12 @@ const Icon: React.FC<{t: number; at: number; kind: keyof typeof ICONS; p: Pt; la
 export const HumanReflectionScene: React.FC<{t: number}> = ({t}) => {
   const f = useFmt();
   const IP: Pt[] = pick(f, [[-260, -560], [-40, -560], [180, -560]] as Pt[], [[220, -380], [450, -380], [680, -380]] as Pt[]);
-  const keys: CamKey[] = [
-    {t: 0, x: 0, y: 0, z: 8, r: 0},
-    {t: A.imagem + 0.95, x: -20, y: -10, z: 2.6, r: -4, d: 1.5},
-    {t: A.pequenos + 0.25, x: pick(f, -60, 120), y: pick(f, -200, -150), z: pick(f, 1.1, 1.0), r: 0, d: 1.6},
-    {t: A.nem - 0.2, x: pick(f, -40, 140), y: pick(f, -240, -170), z: pick(f, 1.04, 0.95), d: 3.8, e: ESM},
-    {t: W_T.messageIn + 0.7, x: pick(f, 260, 520), y: pick(f, -760, -600), z: pick(f, 0.5, 0.5), d: 1.5},
-  ];
-  const cam = drift(camAt(t, keys), t, 0.8);
+  const cam = humanCam(t, f);
   const iris = EIO(D(t, HUMAN_T.a, 0.8));
   const irisR = -30 + iris * Math.hypot(f.W, f.H) * 0.6;
   const reorg = EIO(D(t, A.nem - 0.5, 0.9));
   const line = ESM(D(t, A.nem - 0.1, 1.4));
-  const fade = EIO(D(t, W_T.messageIn + 0.03, 0.55));
+  const fade = 0;
   const times = [A.oracao - 0.3, A.gesto - 0.25, A.decisao - 0.15];
   const thread = (i: number) => {
     const u = EO(D(t, times[i], 0.45));
@@ -71,7 +79,7 @@ export const HumanReflectionScene: React.FC<{t: number}> = ({t}) => {
       <div style={{position: 'absolute', inset: 0, background: `radial-gradient(ellipse 80% 60% at 55% 35%, #FBF7EF 0%, ${COLORS.cream} 60%, #EBE2D1 100%)`}} />
       <div style={{position: 'absolute', left: project(f, cam, 0, 0)[0] - 340, top: project(f, cam, 0, 0)[1] - 340, width: 680, height: 680, borderRadius: '50%', background: 'radial-gradient(circle, rgba(217,168,111,.35), rgba(217,168,111,0) 70%)', opacity: 0.8}} />
       <WorldLayer cam={cam}>
-        <g transform="translate(0 10)"><PalmFigure lookDown={EO(D(t, A.convida, 1.2))} /></g>
+        <Persona x={-PALM0[0]} y={-PALM0[1]} s={HS} pose={mixPose(POSES.offer, OFFER_UP, Math.max(...times.map((a) => Math.sin(Math.PI * D(t, a - 0.1, 1.2)))) * 0.8)} look={CAST.semeador} t={t} shadow={false} />
         <SeedSphere id="palm-seed" x={0} y={-SEEDLIFT} rot={t * 0.8} glow={0.3 + 0.4 * Math.max(...times.map((a) => Math.sin(Math.PI * D(t, a - 0.1, 0.7))))} />
         {[0, 1, 2].map(thread)}
         {line > 0 && <path d={`M ${bpts.slice(0, shown).map((q) => q.map((v) => v.toFixed(1)).join(' ')).join(' L ')}`} fill="none" stroke={COLORS.graphite} strokeWidth={5} strokeLinecap="round" />}
@@ -80,6 +88,7 @@ export const HumanReflectionScene: React.FC<{t: number}> = ({t}) => {
         <Icon t={t} at={times[1]} kind="amor" p={IP[1]} label="amor" reorg={reorg} z={cam.z} />
         <Icon t={t} at={times[2]} kind="porta" p={IP[2]} label="recomeçar" reorg={reorg} z={cam.z} />
       </WorldLayer>
+      {iris < 1 && <svg width={f.W} height={f.H} style={{position: 'absolute', inset: 0}}><ChromaRing cx={f.cx} cy={f.cy} r={Math.max(0, irisR)} o={Math.sin(Math.PI * iris)} w={16} /></svg>}
     </div>
   );
 };

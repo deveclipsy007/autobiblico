@@ -88,12 +88,12 @@ export const BiblePageScene: React.FC<{t: number}> = ({t}) => {
   const wide = pick(f, 1, 0.82);
   const keys: PK[] = [
     {t: 0, x: R(300), y: 235, s: 1.9, rx: 52, ry: -6, rz: -10},
-    {t: 1.35, x: R(700), y: 250, s: 1.75, rx: 47, ry: -4, rz: -8, d: 1.35, e: ESM},
-    {t: 3.3, x: R(640), y: PAGE.top + PAGE.lead - 30, s: 1.42, rx: 36, ry: -2, rz: -5, d: 1.95},
-    {t: 4.5, x: R(gx + 110), y: gy, s: 1.5, rx: 30, ry: 0, rz: -4, d: 1.15},
-    {t: 6.5, x: R(780), y: 1000, s: 0.62 * wide, rx: 24, ry: 6, rz: -2, d: 1.75},
-    {t: 9.45, x: R(gx), y: gy, s: 2.55, rx: 9, ry: 0, rz: 0, d: 2.5},
-    {t: 11.2, x: R(gx), y: gy, s: 3.1, rx: 9, ry: 0, rz: 0, d: 1.6, e: ESM},
+    {t: A.reino, x: R(700), y: 250, s: 1.75, rx: 47, ry: -4, rz: -8, d: 1.35, e: ESM},
+    {t: A.mostarda - 0.6, x: R(640), y: PAGE.top + PAGE.lead - 30, s: 1.42, rx: 36, ry: -2, rz: -5, d: 1.95},
+    {t: A.mostarda + 0.6, x: R(gx + 110), y: gy, s: 1.5, rx: 30, ry: 0, rz: -4, d: 1.15},
+    {t: A.treze + 0.05, x: R(780), y: 1000, s: 0.62 * wide, rx: 24, ry: 6, rz: -2, d: 1.75},
+    {t: A.olha - 0.05, x: R(gx), y: gy, s: 2.55, rx: 9, ry: 0, rz: 0, d: 2.5},
+    {t: PAGE_T.irisB, x: R(gx), y: gy, s: 3.1, rx: 9, ry: 0, rz: 0, d: 1.6, e: ESM},
   ];
   const c = pageCamAt(t, keys);
   const dimAll = EIO(D(t, A.parece + 0.25, 0.9));

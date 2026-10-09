@@ -71,3 +71,16 @@ col = np.clip(bg - diff / safe, 0, 255)
 rgba = np.dstack([col, alpha * 255]).astype(np.uint8)
 Image.fromarray(rgba, 'RGBA').save(os.path.join(R, 'logo-alpha.png'))
 print('logo-alpha ok')
+
+# textura de carvão em brasa (letras queimando, no espírito do VER da logo)
+H2, W2 = 512, 2048
+base = fbm(H2, W2, 7, 6, 21)
+spk = fbm(H2, W2, 4, 110, 22) * 0.7 + fbm(H2, W2, 3, 30, 23) * 0.3
+char = np.array([30, 25, 23], float); ember = np.array([214, 92, 30], float); hot = np.array([255, 186, 110], float)
+heat = np.clip((spk - 0.6) / 0.16, 0, 1) ** 1.8 * np.clip(base * 1.3, 0, 1)
+img = char[None, None] * (0.85 + 0.3 * base[..., None]) * (1 - heat[..., None]) + ember[None, None] * heat[..., None]
+hotm = np.clip((spk - 0.74) / 0.06, 0, 1)[..., None]
+img = img * (1 - hotm) + hot[None, None] * hotm
+grain2 = rng.normal(0, 7, (H2, W2))[..., None]
+Image.fromarray(np.clip(img + grain2, 0, 255).astype(np.uint8)).save(os.path.join(R, 'ember-texture.jpg'), quality=93)
+print('ember ok')

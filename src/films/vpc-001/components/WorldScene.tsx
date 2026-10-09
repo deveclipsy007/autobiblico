@@ -18,8 +18,9 @@ import {PlantGrowthSequence, sproutAt} from './PlantGrowthSequence';
 import {TREE} from './BranchExpansion';
 import {Bird, Flight} from './BirdLandingAnimation';
 import {KingdomExpansionMap, NightField} from './KingdomExpansionMap';
-import {SIT_HANDS, SittingFigure, StandingFigure} from './Figures';
+import {CAST, POSES, Persona, groundY, mixPose, palmOf} from '../../../brand/characters/Persona';
 import {ShareCard} from './ShareCard';
+import {ChromaTrail, Embers} from '../../../brand/fire';
 
 // ---------- tempos ----------
 export const W_T = {
@@ -31,7 +32,13 @@ export const W_T = {
   messageIn: S.message + 0.3,
 };
 export const P1: Pt = [330, 0], P2: Pt = [1650, 0];
-export const P2H: Pt = [P2[0] + SIT_HANDS[0], P2[1] + SIT_HANDS[1]];
+export const PS = 0.95;
+/** Atuação de "Alguém": encolhido → abre as mãos → levanta a cabeça. */
+export const p2Pose = (t: number) => mixPose(mixPose(POSES.sitHug, POSES.sitReceive, EIO(D(t, A.compartilhe + 0.3, 1.3))), POSES.sitHope, EIO(D(t, A.pessoa + 0.25, 1.6)));
+export const p1Pose = (t: number) => mixPose(mixPose(POSES.lookUp, POSES.stand, EIO(D(t, A.vezes + 1.2, 1.4))), POSES.lookSide, EIO(D(t, A.compartilhe - 0.6, 1.1)));
+export const p2Root = (t: number): Pt => [P2[0], groundY(p2Pose(t)) * PS];
+export const p2Palm = (t: number): Pt => { const r = p2Root(t); return palmOf(p2Pose(t), r[0], r[1], PS); };
+export const P2H: Pt = (() => { const pz = POSES.sitHope; return palmOf(pz, P2[0], groundY(pz) * PS, PS); })();
 
 // ---------- semente: posição física ----------
 export const seedWorld = (t: number) => {
@@ -55,7 +62,7 @@ export const worldKeys = (f: Fmt): CamKey[] => {
   const s = pick(f, {x: 1000, y: -870, z: 0.62}, {x: 950, y: -450, z: 0.78});
   return [
     {t: 0, x: 0, y: -900, z: 36, r: 5},
-    {t: 13.2, x: 0, y: -900, z: 40, r: 2, d: 2.3, e: ESM},
+    {t: A.quase - 0.4, x: 0, y: -900, z: 40, r: 2, d: 2.3, e: ESM},
     {t: A.desaparece + 1.05, x: pick(f, 170, 300), y: pick(f, -850, -870), z: pick(f, 1.5, 1.25), r: 0, d: 1.15, e: PULL},
     {t: A.coloca - 0.05, x: pick(f, 130, 240), y: -865, z: pick(f, 1.62, 1.35), d: 1.15, e: ESM},
     {t: A.terra + 0.2, x: 0, y: pick(f, -60, -80), z: pick(f, 0.9, 0.78), d: 0.85, e: EIO},
@@ -72,7 +79,8 @@ export const worldKeys = (f: Fmt): CamKey[] => {
     {t: A.discreta + 0.15, x: 0, y: 0, z: pick(f, 2.6, 2.2), d: 1.75},
     {t: A.maior + 0.7, x: 0, y: -700, z: pick(f, 0.042, 0.05), d: 2.55},
     {t: A.anunciar + 0.55, x: 0, y: 0, z: 8, d: 1.6},
-    {t: W_T.messageIn + 0.01, x: m.x, y: m.y, z: m.z * 1.25, d: 0.01},
+    {t: W_T.messageIn + 0.01, x: m.x - 800, y: m.y + 260, z: m.z * 1.2, d: 0.01},
+    {t: W_T.messageIn + 0.6, x: m.x, y: m.y, z: m.z * 1.14, d: 0.59, e: EO},
     {t: A.vezes - 0.6, z: m.z, d: 2.9, e: ESM},
     {t: A.alguem2 - 0.1, x: m.x, y: m.y, z: m.z * 0.96, d: 4.6, e: ESM},
     {t: A.dificil + 0.1, x: s.x, y: s.y, z: s.z, d: 2.2},
@@ -81,9 +89,17 @@ export const worldKeys = (f: Fmt): CamKey[] => {
     {t: A.ver - 0.05, x: P2H[0], y: P2H[1] - 6, z: 22, d: 0.75, e: EIN},
   ];
 };
+/** Inclinação da câmera (graus, topo se afasta): plongée no mergulho, contra-plongée na árvore, mapa rumo ao horizonte. */
+export const worldPitch = (t: number) => camAt(t, [
+  {t: 0, r: 0},
+  {t: A.mas2 + 1.6, r: 12, d: 1.6}, {t: A.raiz, r: 0, d: 1.5},
+  {t: A.abrigo, r: 11, d: 2.2}, {t: A.jesus2 + 0.8, r: 0, d: 1.4},
+  {t: A.maior + 0.5, r: 42, d: 2.4}, {t: A.anunciar + 0.45, r: 0, d: 1.4},
+  {t: A.esperanca + 0.2, r: 8, d: 2.6}, {t: A.ver, r: 0, d: 0.7},
+]).r;
 export const worldCam = (t: number, f: Fmt): Cam => {
   const c = camAt(t, worldKeys(f));
-  const calm = t < 14 ? 0.3 : t > 70.5 ? 0.2 : 1;
+  const calm = t < A.desaparece ? 0.3 : t > A.esperanca ? 0.2 : 1;
   return drift(c, t, calm);
 };
 
@@ -116,7 +132,8 @@ const Sky: React.FC<{t: number; f: Fmt}> = ({t, f}) => {
 export const WorldScene: React.FC<{t: number}> = ({t}) => {
   const f = useFmt();
   const cam = worldCam(t, f);
-  const inHuman = t > S.human + 0.85 && t < W_T.messageIn;
+  const pitch = worldPitch(t);
+  const inHuman = t > S.human + 0.85 && t < W_T.messageIn - 0.001;
   if (inHuman) return null;
   const seed = seedWorld(t);
   const pose = handPose(t, W_T.enter, W_T.tilt, W_T.exit);
@@ -134,7 +151,7 @@ export const WorldScene: React.FC<{t: number}> = ({t}) => {
   const mapO = win(t, W_T.night + 0.3, A.comeco + 0.6, 0.8, 0.9) * (1 - 0.65 * dip);
   const share = t > A.alguem2 - 0.6;
   const arcU = EIO(D(t, A.compartilhe + 0.75, A.pessoa - A.compartilhe - 0.75));
-  const arc = (u: number) => cbez([P1[0] + 6, -300], [P1[0] + 300, -1000], [P2H[0] - 300, -900], P2H, u);
+  const arc = (u: number) => cbez(palmOf(p1Pose(t), P1[0], groundY(p1Pose(t)) * PS, PS), [P1[0] + 300, -1000], [P2H[0] - 300, -900], p2Palm(A.pessoa), u);
   const sproutHope = EO(D(t, A.esperanca - 0.05, 0.8));
   const pebbleO = win(t, A.mas2 - 0.2, A.mas2 + 1.9, 0.6, 0.4);
   const showSeedUnder = t > W_T.land && t < A.cresce + 1.2;
@@ -142,11 +159,13 @@ export const WorldScene: React.FC<{t: number}> = ({t}) => {
   return (
     <div style={{position: 'absolute', inset: 0}}>
       <Sky t={t} f={f} />
+      {nightR > 0 && <div style={{position: 'absolute', inset: 0, background: COLORS.deep, opacity: clamp((nightR - 2500) / 2500)}} />}
+      <div style={{position: 'absolute', inset: 0, transformOrigin: '50% 58%', transform: Math.abs(pitch) > 0.05 ? `perspective(${f.v ? 1700 : 1400}px) rotateX(${pitch.toFixed(3)}deg)` : undefined}}>
       {macroO > 0 && <OrbitBokeh t={t} rot={t * 0.55} cx={sP[0]} cy={sP[1]} o={macroO * EO(D(t, S.seed, 0.8))} />}
       <WorldLayer cam={cam}>
         {t > A.mas2 - 0.2 && <circle cx={0} cy={110} r={0.1} />}
-        <SoilCrossSection t={t} planted={planted} />
-        {F > 0 && t < W_T.messageIn && <ProceduralRootGrowth t={t} F={F} raizAt={A.raiz} raizOut={A.depois + 0.4} />}
+        {nightR < 9000 && <SoilCrossSection t={t} planted={planted} />}
+        {F > 0 && t < W_T.messageIn && nightR < 9000 && <ProceduralRootGrowth t={t} F={F} raizAt={A.raiz} raizOut={A.depois + 0.4} />}
         {t > W_T.messageIn && <ProceduralRootGrowth t={t} F={1e5} raizAt={-9} raizOut={-8} />}
         <DiagramTrace t={t} f={f} a={W_T.diagA} out={W_T.diagOut} z={cam.z} />
         {nightR > 0 && <NightField R={nightR} t={t} o={EO(D(t, W_T.night, 0.7))} />}
@@ -156,22 +175,24 @@ export const WorldScene: React.FC<{t: number}> = ({t}) => {
         {/* semente: macro, dedo, queda, plantio, fenda de luz */}
         {(t < W_T.land || showSeedUnder) && <SeedSphere id="w-seed" x={seed.p[0]} y={seed.p[1]} rot={t * (t < W_T.release ? 0.9 : 3)} crack={crack} glow={clamp(seedGlow)} stretch={seed.stretch} />}
         <FingerScaleReveal pose={pose} />
+        {/* a vida acende: brasas sobem da fenda */}
+        <Embers t={t} x={0} y={104} a={A.vida} b={A.vida + 1.4} n={22} spread={7} rise={22} size={0.55} seed={4} />
         {t > A.torna - 0.4 && t < S.human + 0.6 && FLIGHTS.map((fl, i) => <g key={i} opacity={1 - EIO(D(t, W_T.night + 0.4, 1.0))}><Bird t={t} fl={fl} /></g>)}
         {t > W_T.messageIn && FLIGHTS.map((fl, i) => <Bird key={i} t={t - W_T.messageIn + fl.t1 + 3 + i} fl={fl} />)}
         {/* começo: a semente acesa no centro do mapa */}
         {kingdom && t > A.comeco - 0.3 && <SeedSphere id="k-seed" x={0} y={0} glow={0.8 + 0.2 * Math.sin(t * 3)} rot={t} shade={EO(D(t, A.comeco - 0.3, 0.6))} />}
         {/* pessoas */}
-        {t > W_T.messageIn && <StandingFigure x={P1[0]} look={share ? -6 * EO(D(t, A.compartilhe - 0.5, 1)) : 0} />}
+        {t > W_T.messageIn && <Persona x={P1[0]} y={groundY(p1Pose(t)) * PS} s={PS} pose={p1Pose(t)} look={CAST.semeador} t={t} />}
         {share && (
           <g>
             <ellipse cx={P2[0] + 20} cy={-110} rx={300} ry={260} fill="url(#shade)" opacity={0.85 * win(t, A.alguem2 - 0.3, A.pessoa + 0.2, 1.0, 1.8)} />
             {Array.from({length: 14}, (_, i) => { const x = P2[0] - 180 + rnd(i, 4) * 400, ph = (t * 1.6 + rnd(i, 5)) % 1; return <path key={i} d={`M ${x} ${-420 + ph * 380} l -10 34`} stroke={COLORS.deep} strokeWidth={3} strokeLinecap="round" opacity={0.45 * win(t, A.ama - 0.2, A.pessoa, 0.8, 1.2) * Math.sin(ph * Math.PI)} />; })}
             <circle cx={P2H[0]} cy={P2H[1]} r={260} fill="url(#warm)" opacity={clamp(EO(D(t, A.pessoa - 0.15, 2.4)) + sproutHope * 0.6)} />
-            <SittingFigure x={P2[0]} lift={EIO(D(t, A.pessoa + 0.25, 1.5))} open={EO(D(t, A.compartilhe + 0.5, 1.2))} />
+            <Persona x={p2Root(t)[0]} y={p2Root(t)[1]} s={PS} pose={p2Pose(t)} look={CAST.alguem} t={t} rim={0.4 + 0.6 * EO(D(t, A.pessoa, 1.5))} />
             {arcU > 0 && arcU < 1 && <path d={`M ${Array.from({length: 40}, (_, k) => arc((k / 39) * arcU).map((v) => v.toFixed(1)).join(' ')).join(' L ')}`} fill="none" stroke={COLORS.gold} strokeWidth={3 / cam.z} strokeDasharray={`${8 / cam.z} ${10 / cam.z}`} opacity={0.9} />}
-            {arcU > 0 && <SeedSphere id="share-seed" x={arc(arcU)[0]} y={arc(arcU)[1] - (arcU >= 1 ? 1 : 0)} glow={arcU < 1 ? 1 : 0.6 + sproutHope * 0.6} rot={t * 2} />}
+            {arcU > 0 && <SeedSphere id="share-seed" x={arcU < 1 ? arc(arcU)[0] : p2Palm(t)[0]} y={(arcU < 1 ? arc(arcU)[1] : p2Palm(t)[1]) - 3} glow={arcU < 1 ? 1 : 0.6 + sproutHope * 0.6} rot={t * 2} />}
             {sproutHope > 0 && (
-              <g transform={`translate(${P2H[0]} ${P2H[1] - 4})`}>
+              <g transform={`translate(${p2Palm(t)[0]} ${p2Palm(t)[1] - 7})`}>
                 <path d={`M 0 0 C -2 -8 2 -14 0 ${-22 * sproutHope}`} stroke={COLORS.sage} strokeWidth={2.4} fill="none" strokeLinecap="round" />
                 <path d="M 0 0 C -3 -5 -12 -8 -15 -3 C -12 2 -4 2 0 0 Z" fill={COLORS.sage} transform={`translate(0 ${-22 * sproutHope}) scale(${sproutHope})`} />
                 <path d="M 0 0 C 3 -5 12 -8 15 -3 C 12 2 4 2 0 0 Z" fill={COLORS.sageDark} transform={`translate(0 ${-22 * sproutHope}) scale(${sproutHope})`} />
@@ -189,9 +210,17 @@ export const WorldScene: React.FC<{t: number}> = ({t}) => {
       {t > W_T.diagA && t < W_T.diagOut + 0.6 && <DiagramLabels t={t} f={f} cam={cam} times={W_T.diagTimes} out={W_T.diagOut} />}
       {t > S.seed && t < A.desaparece + 0.6 && <ScaleMarker t={t} at={A.grao2 - 0.05} out={A.desaparece - 0.1} sx={sP[0]} sy={sP[1]} rPx={SEED_R * cam.z} />}
       {share && <ShareCard t={t} f={f} cam={cam} />}
+      {/* rastros cromáticos (laranja/azul, como os traços da logo) */}
+      {(t > W_T.release && t < W_T.land + 0.12) || (arcU > 0 && arcU < 1.0 + 0.0) ? (
+        <svg width={f.W} height={f.H} style={{position: 'absolute', inset: 0}}>
+          {t > W_T.release && t < W_T.land + 0.12 && <ChromaTrail light w={Math.max(5, SEED_R * cam.z * 1.2)} o={0.85 * (1 - D(t, W_T.land, 0.12))} pts={Array.from({length: 12}, (_, k) => { const ts = Math.max(W_T.release, Math.min(W_T.land, t) - (11 - k) * 0.011); const c = worldCam(ts, f); const sp = seedWorld(ts).p; return project(f, c, sp[0], sp[1]).slice(0, 2) as [number, number]; })} />}
+          {arcU > 0 && arcU < 1 && <ChromaTrail light o={0.8} w={Math.max(5, SEED_R * cam.z * 1.2)} pts={Array.from({length: 14}, (_, k) => { const ts = t - (13 - k) * 0.018; const u = EIO(D(ts, A.compartilhe + 0.75, A.pessoa - A.compartilhe - 0.75)); const c = worldCam(ts, f); const p = arc(Math.max(0.001, u)); return project(f, c, p[0], p[1]).slice(0, 2) as [number, number]; })} />}
+        </svg>
+      ) : null}
       {/* raios de luz no "Percebe?" */}
       {t > A.percebe - 0.6 && t < W_T.night + 1.2 && <div style={{position: 'absolute', inset: 0, background: 'repeating-linear-gradient(112deg, rgba(255,236,200,0) 0px, rgba(255,236,200,.0) 90px, rgba(255,236,200,.28) 150px, rgba(255,236,200,0) 230px)', mixBlendMode: 'screen', opacity: win(t, A.percebe - 0.5, W_T.night - 0.3, 1.0, 0.8) * 0.7, WebkitMaskImage: 'linear-gradient(180deg, #000 0%, transparent 75%)', maskImage: 'linear-gradient(180deg, #000 0%, transparent 75%)'}} />}
       {void S}
+      </div>
     </div>
   );
 };

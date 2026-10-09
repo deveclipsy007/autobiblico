@@ -55,17 +55,17 @@ export const KingdomExpansionMap: React.FC<{t: number; f: Fmt; cam: Cam; dots: n
     const u = clamp((waveR - dP) / Math.max(1, dN - dP));
     if (u <= 0) return;
     const a = P(par.p), b = P(n.p);
-    if (Math.max(a[0], b[0]) < -50 || Math.min(a[0], b[0]) > f.W + 50 || Math.max(a[1], b[1]) < -50 || Math.min(a[1], b[1]) > f.H + 50) return;
+    if (Math.max(a[0], b[0]) < -f.W || Math.min(a[0], b[0]) > f.W * 2 || Math.max(a[1], b[1]) < -f.H * 1.5 || Math.min(a[1], b[1]) > f.H * 2) return;
     de += `M${a[0].toFixed(1)} ${a[1].toFixed(1)}L${(a[0] + (b[0] - a[0]) * u).toFixed(1)} ${(a[1] + (b[1] - a[1]) * u).toFixed(1)}`;
     if (u >= 1) {
       const fresh = clamp(1 - (waveR - dN) / (dN * 0.5 + 400));
-      circles.push(<circle key={i} cx={b[0]} cy={b[1]} r={2.6 + fresh * 4} fill={fresh > 0.4 ? '#FFE3B3' : COLORS.goldLight} opacity={0.85} />);
-      if (fresh > 0.05) circles.push(<circle key={`g${i}`} cx={b[0]} cy={b[1]} r={10 + fresh * 14} fill={COLORS.goldLight} opacity={0.16 * fresh} />);
+      circles.push(<circle key={i} cx={b[0]} cy={b[1]} r={2.6 + fresh * 4} fill={fresh > 0.55 ? '#FFE2B8' : fresh > 0.2 ? '#FFB36B' : COLORS.goldLight} opacity={0.88} />);
+      if (fresh > 0.05) circles.push(<circle key={`g${i}`} cx={b[0]} cy={b[1]} r={10 + fresh * 16} fill="#E8742A" opacity={0.2 * fresh} />);
     }
   });
   const O = P([0, 0]);
   return (
-    <svg width={f.W} height={f.H} style={{position: 'absolute', inset: 0, opacity: o}}>
+    <svg width={f.W} height={f.H} style={{position: 'absolute', inset: 0, opacity: o, overflow: 'visible'}}>
       <path d={de} stroke={COLORS.goldLight} strokeOpacity={0.42} strokeWidth={1.4} fill="none" />
       {circles}
       <path d={dl} stroke={COLORS.cream} strokeOpacity={0.35} strokeWidth={1.2} fill="none" />

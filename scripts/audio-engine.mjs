@@ -335,5 +335,14 @@ export function createEngine(end) {
     }
     for (let i = 0; i < 7; i++) tick(t0 + 0.02 + rnd() * 0.18, 0.02 + rnd() * 0.02, 900 + rnd() * 1500, rnd() * 1.2 - 0.6);
   }
-  return {chirp, thud, SR, N, sidechain, rnd, mtof, padNote, bassNote, kick, clap, hat, pluck, whoosh, pop, tick, key, bell, stamp, riser, impact, shimmer, swell, sub, send, receive, pen, eraser, paper, crunch, render};
+  /** Brasa crepitando: estalos curtos e filtrados, densidade e brilho decrescentes (fogo elegante, não fogueira). */
+  function crackle(t0, dur, amp = 0.05, dens = 40) {
+    for (let i = 0; i < dur * dens; i++) {
+      const tt = t0 + rnd() * dur, k = 1 - (tt - t0) / dur;
+      const s0 = Math.floor(tt * SR), f = svf(), fc = 1800 + rnd() * 4200, [gl, gr] = pan(rnd() * 1.2 - 0.6);
+      for (let n = 0; n < 0.012 * SR; n++) { const v = f(noise(), fc, 1.4).bp * Math.exp(-n / SR / 0.0018); write(sfx, s0 + n, v * amp * k * gl, v * amp * k * gr, 0.12); }
+    }
+    whoosh(t0, dur, amp * 0.25, true, -0.2, 0.2);
+  }
+  return {crackle, chirp, thud, SR, N, sidechain, rnd, mtof, padNote, bassNote, kick, clap, hat, pluck, whoosh, pop, tick, key, bell, stamp, riser, impact, shimmer, swell, sub, send, receive, pen, eraser, paper, crunch, render};
 }

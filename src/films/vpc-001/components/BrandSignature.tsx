@@ -6,22 +6,30 @@ import React from 'react';
 import {staticFile} from 'remotion';
 import {COLORS, FONTS} from '../../../brand/tokens';
 import {D, EIN, EIO, EO, clamp, lerp, rnd} from '../lib/math';
-import {pick, useFmt} from '../lib/format';
+import {Fmt, pick, useFmt} from '../lib/format';
 import {A, END} from '../story';
+import {ChromaRing} from '../../../brand/fire';
 
 export const BRAND_T = {a: A.esperanca + 0.42, ver: A.ver, para: A.para, crer: A.crer, worldOff: A.ver + 0.35, sub: A.crer + 1.35};
 const IMG = 1254, CROSS = [835, 490] as const, CENTER = [627, 634] as const, SPLIT = 782;
 
-export const BrandSignature: React.FC<{t: number}> = ({t}) => {
-  const f = useFmt();
+/** Câmera da logo: da cruz (perto) ao enquadramento final. */
+export const brandPose = (t: number, f: Fmt) => {
   const T0 = BRAND_T.ver;
   const base = pick(f, 0.78, 0.64);
   const lc = pick(f, [540, 880], [960, 500]);
-  // câmera da logo: da cruz (perto) ao enquadramento final
   const pull = EO(D(t, T0 - 0.05, 1.9));
   const push = (t - T0) * 0.006;
   const sc = base * lerp(2.5, 1, pull) * (1 + Math.max(0, push));
   const camX = lerp(CROSS[0], CENTER[0], pull), camY = lerp(CROSS[1], CENTER[1], pull);
+  const x = lc[0] + (CROSS[0] - camX) * sc + (1 - pull) * (f.cx - lc[0]), y = lc[1] + (CROSS[1] - camY) * sc + (1 - pull) * (f.cy - lc[1]);
+  return {base, lc, pull, sc, camX, camY, x, y};
+};
+
+export const BrandSignature: React.FC<{t: number}> = ({t}) => {
+  const f = useFmt();
+  const T0 = BRAND_T.ver;
+  const {base, lc, pull, sc, camX, camY} = brandPose(t, f);
   const toScreen = (x: number, y: number): [number, number] => [lc[0] + (x - camX) * sc + (1 - pull) * (f.cx - lc[0]), lc[1] + (y - camY) * sc + (1 - pull) * (f.cy - lc[1])];
   const [stx, sty] = toScreen(CROSS[0], CROSS[1]);
   // fases
@@ -117,7 +125,8 @@ export const BrandSignature: React.FC<{t: number}> = ({t}) => {
             <path d={`M 0 -4 L ${-110 * sc / base * flare} 0 L 0 4 L ${110 * sc / base * flare} 0 Z`} fill="url(#armH)" />
             <rect x={-f.W * 0.6 * flare} y={-1.5} width={f.W * 1.2 * flare} height={3} fill="url(#armH)" opacity={0.7 * (1 - flareOut)} />
           </g>
-          {ring > 0 && ring < 1 && <circle cx={stx} cy={sty} r={20 + ring * Math.hypot(f.W, f.H) * 0.5} fill="none" stroke="#FFE3B3" strokeWidth={10 * (1 - ring)} opacity={0.7 * (1 - ring)} />}
+          {light > 0 && light < 1 && <ChromaRing cx={stx} cy={sty} r={Math.max(0, lightR)} o={Math.sin(Math.PI * light)} w={20} />}
+          {ring > 0 && ring < 1 && <ChromaRing cx={stx} cy={sty} r={20 + ring * Math.hypot(f.W, f.H) * 0.5} o={0.9 * (1 - ring)} w={22 * (1 - ring * 0.6)} />}
           {t > T0 + 1.6 && <circle cx={stx} cy={sty} r={34 * (sc / base)} fill="url(#core)" opacity={0.35 + 0.2 * Math.sin((t - T0) * 2.2)} />}
         </svg>
       )}

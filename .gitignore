@@ -5,3 +5,4 @@ out/
 public/audio/vpc-001/*.wav
 !public/audio/vpc-001/mix-master.wav
 build/
+public/audio/vpc-001/vo-v1/*.wav

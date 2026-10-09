@@ -43,7 +43,7 @@ export const SeedSphere: React.FC<{x?: number; y?: number; r?: number; rot?: num
       </g>
       {crack > 0 && (
         <g>
-          <path d={`M ${-r * 0.15} ${-r * 0.98} L ${r * 0.05} ${-r * 0.5} L ${-r * 0.12} ${-r * 0.1} L ${r * 0.1} ${r * 0.35} L ${-r * 0.04} ${r * 0.98}`} fill="none" stroke={COLORS.goldLight} strokeWidth={r * 0.09} strokeLinecap="round" strokeLinejoin="round" pathLength={1} strokeDasharray={1} strokeDashoffset={1 - clamp(crack * 1.3)} style={{filter: `drop-shadow(0 0 ${r * 0.25}px ${COLORS.goldLight})`}} />
+          <path d={`M ${-r * 0.15} ${-r * 0.98} L ${r * 0.05} ${-r * 0.5} L ${-r * 0.12} ${-r * 0.1} L ${r * 0.1} ${r * 0.35} L ${-r * 0.04} ${r * 0.98}`} fill="none" stroke="#FFB36B" strokeWidth={r * 0.09} strokeLinecap="round" strokeLinejoin="round" pathLength={1} strokeDasharray={1} strokeDashoffset={1 - clamp(crack * 1.3)} style={{filter: `drop-shadow(0 0 ${r * 0.3}px #E8742A)`}} />
         </g>
       )}
     </g>
